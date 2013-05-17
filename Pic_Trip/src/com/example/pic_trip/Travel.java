@@ -75,16 +75,16 @@ public class Travel {
 	public void save() {
 		TravelDAO TDAO = new TravelDAO();
 		if (this.id == -1) {
-			TDAO.addPoint(this);
+			TDAO.addTravel(this);
 		} else {
-			TDAO.updatePoint(this);
+			TDAO.updateTravel(this);
 		}
 	}
 	
 	public void delete() {
 		if (this.id != -1) {
 			TravelDAO TDAO = new TravelDAO();
-			TDAO.deletePoint(this.id);
+			TDAO.deleteTravel(this.id);
 		}
 	}
 }
