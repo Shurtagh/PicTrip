@@ -75,7 +75,7 @@ public class TravelDAO extends DAO {
 	}
 	
 	public void addTravel(Travel t) {
-		if (p.getId() == -1) {
+		if (t.getId() == -1) {
 			ContentValues value = new ContentValues();
 			value.put(TRAVEL_NAME, t.getName());
 			value.put(TRAVEL_DATE_START, t.getDate_start());
@@ -86,7 +86,7 @@ public class TravelDAO extends DAO {
 	}
 	
 	public void updateTravel(Travel t) {
-		if (p.getId() != -1) {
+		if (t.getId() != -1) {
 			ContentValues value = new ContentValues();
 			value.put(TRAVEL_NAME, t.getName());
 			value.put(TRAVEL_DATE_START, t.getDate_start());

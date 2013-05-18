@@ -1,5 +1,6 @@
 package com.example.pic_trip;
 
+import com.google.android.maps.MapActivity;
 import android.content.Context;
 import android.os.Bundle;
  
@@ -22,6 +23,4 @@ public class MainActivity extends MapActivity {
 	  protected boolean isLocationDisplayed() {
 	    return true;
 	  }
-	  
-	  public getContext() 
 }

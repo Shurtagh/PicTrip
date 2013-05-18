@@ -95,18 +95,18 @@ public class Point {
 	 * 
 	 */
 	public void save() {
-		PointDAO PDAO = new PointDAO();
+		//PointDAO PDAO = new PointDAO();
 		if (this.id == -1) {
-			PDAO.addPoint(this);
+			//PDAO.addPoint(this);
 		} else {
-			PDAO.updatePoint(this);
+			//PDAO.updatePoint(this);
 		}
 	}
 	
 	public void delete() {
 		if (this.id != -1) {
-			PointDAO PDAO = new PointDAO();
-			PDAO.deletePoint(this.id);
+			/*PointDAO PDAO = new PointDAO();
+			PDAO.deletePoint(this.id);*/
 		}
 	}
 }

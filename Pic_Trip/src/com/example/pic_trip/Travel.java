@@ -73,18 +73,18 @@ public class Travel {
 	 */
 	
 	public void save() {
-		TravelDAO TDAO = new TravelDAO();
+		//TravelDAO TDAO = new TravelDAO();
 		if (this.id == -1) {
-			TDAO.addTravel(this);
+			//TDAO.addTravel(this);
 		} else {
-			TDAO.updateTravel(this);
+			//TDAO.updateTravel(this);
 		}
 	}
 	
 	public void delete() {
 		if (this.id != -1) {
-			TravelDAO TDAO = new TravelDAO();
-			TDAO.deleteTravel(this.id);
+			//TravelDAO TDAO = new TravelDAO();
+			//TDAO.deleteTravel(this.id);
 		}
 	}
 }
