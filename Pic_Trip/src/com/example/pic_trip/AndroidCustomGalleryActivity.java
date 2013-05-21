@@ -26,7 +26,7 @@ public class AndroidCustomGalleryActivity extends Activity {
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private ImageAdapter imageAdapter;
-    float[][] tab = new float[10][2];
+    float[][] tab = new float[200][2];
  
     /** Called when the activity is first created. */
     @Override
@@ -34,8 +34,8 @@ public class AndroidCustomGalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
  
-        final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE };
-        final String orderBy = MediaStore.Images.Media._ID;
+        final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.DATE_TAKEN };
+        final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
         Cursor imagecursor = managedQuery(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null,
                 null, orderBy);
