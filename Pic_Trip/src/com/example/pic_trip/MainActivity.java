@@ -79,10 +79,10 @@ public class MainActivity extends Activity {
 				  lastPoint = currentPoint;
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
-					  map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+					  map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath())).showInfoWindow();
 					  i++;
 					  map.getUiSettings().setScrollGesturesEnabled(false);
-					  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
+					  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
 				  } else {
 					  i=1;
 					  lastPoint = null;
@@ -92,9 +92,9 @@ public class MainActivity extends Activity {
 		  };
 		  	
 		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
-	    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath()));
+	    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath())).showInfoWindow();
 	    	map.getUiSettings().setScrollGesturesEnabled(false);
-	    	map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
+	    	map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
 	    	//map.setOnInfoWindowClickListener(this);
 	    	
 	    	
@@ -106,6 +106,7 @@ public class MainActivity extends Activity {
 		    Bundle bundle = imageReturnedIntent.getExtras();
 		    if(bundle!=null) {
 		    	//images = bundle.getFloatArray("Images");
+		    	map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    	result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
 		    	
 		    	// tracé normal
@@ -115,7 +116,6 @@ public class MainActivity extends Activity {
 		    	traceInteractif();
 	    		
 		    	}
-		    	map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    }
 	  
 		  /*
