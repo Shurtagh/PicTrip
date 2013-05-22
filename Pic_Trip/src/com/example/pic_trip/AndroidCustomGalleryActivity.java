@@ -1,5 +1,7 @@
 package com.example.pic_trip;
  
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +10,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +19,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
  
 public class AndroidCustomGalleryActivity extends Activity {
     private int count;
@@ -27,6 +27,8 @@ public class AndroidCustomGalleryActivity extends Activity {
     private String[] arrPath;
     private ImageAdapter imageAdapter;
     float[][] tab = new float[200][2];
+    MultipleImages list = new MultipleImages();
+    ArrayList<ObjetImage> imagesToSend = list.getImages();
  
     /** Called when the activity is first created. */
     @Override
@@ -78,24 +80,23 @@ public class AndroidCustomGalleryActivity extends Activity {
                     	nb++;
                     }
                 }
-            	float[] finalTab = new float[nb*2];
-            	int j = 0;
                 for (int i=0; i<len; i++)
                 {
                     if (thumbnailsselection[i]){
-                    	finalTab[j] = tab[i][0];
-                    	j++;
-                    	finalTab[j] = tab[i][1];
-                    	j++;
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i]));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);
             	
-            	Bundle b=new Bundle();
-            	b.putFloatArray("Images", finalTab);
-                intent.putExtras(b);
+            	//Bundle b=new Bundle();
+            	//b.putFloatArray("Images", finalTab);
+            	//ObjetImage image = new ObjetImage(1.0f, 3.0f, "path");
+            	intent.putExtra("result", imagesToSend);
+                
+            	//intent.putExtras(b);
                 setResult(RESULT_OK, intent);
                 finish();
+                
             }
         });
     }

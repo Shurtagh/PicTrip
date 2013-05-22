@@ -1,5 +1,7 @@
 package com.example.pic_trip;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,8 +23,10 @@ public class MainActivity extends Activity {
 	private Intent intent;
 	private LatLng currentPoint;
 	private LatLng lastPoint = null;
-	private int i=2;
+	private int i=1;
 	private float[] images;
+	private ArrayList<ObjetImage> result;
+	private CancelableCallback MyCancelableCallback = null;
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -38,67 +42,83 @@ public class MainActivity extends Activity {
 	    });
 	  } 
 	  
+	  private void traceNormal() {
+		  LatLng lastPoint = null;
+	    	boolean first = true;
+	    	LatLng firstPoint = null;
+	    	for(int i=0;i<result.size();i++) {
+	    		LatLng currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
+	    		if(first) {
+	    			firstPoint = currentPoint;
+	    			first = false;
+	    		}
+	    		map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+	    		if(lastPoint != null) {
+	    			map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED));
+	    		}
+	    		lastPoint = currentPoint;
+	    	}
+	    	map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPoint, 10));
+	  }
+	  
+	  private void traceInteractif() {
+		  MyCancelableCallback =
+				  new CancelableCallback(){
+			  
+			  @Override
+			  public void onCancel() {
+				  map.getUiSettings().setScrollGesturesEnabled(true);
+			  }
+			  
+			  @Override
+			  public void onFinish() {
+				  map.getUiSettings().setAllGesturesEnabled(true);
+				  if(lastPoint != null) {
+					  map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED)).setGeodesic(true);
+				  }
+				  lastPoint = currentPoint;
+				  if(i<result.size()) {
+					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
+					  map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+					  i++;
+					  map.getUiSettings().setScrollGesturesEnabled(false);
+					  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
+				  } else {
+					  i=1;
+					  lastPoint = null;
+				  }
+			  }
+			  
+		  };
+		  	
+		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
+	    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath()));
+	    	map.getUiSettings().setScrollGesturesEnabled(false);
+	    	map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
+	    	//map.setOnInfoWindowClickListener(this);
+	    	
+	    	
+	  }
+	  
 	  protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
 		    super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
 		    map.clear();
 		    Bundle bundle = imageReturnedIntent.getExtras();
 		    if(bundle!=null) {
-		    	images = bundle.getFloatArray("Images");
+		    	//images = bundle.getFloatArray("Images");
+		    	result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
+		    	
 		    	// tracé normal
-		    	/*LatLng lastPoint = null;
-		    	boolean first = true;
-		    	LatLng firstPoint = null;
-		    	for(int i=0;i<images.length-1;i++) {
-		    		LatLng currentPoint = new LatLng(images[i], images[++i]);
-		    		if(first) {
-		    			firstPoint = currentPoint;
-		    			first = false;
-		    		}
-		    		map.addMarker(new MarkerOptions().position(currentPoint).title("Point"));
-		    		if(lastPoint != null) {
-		    			map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED)).setGeodesic(true);
-		    		}
-		    		lastPoint = currentPoint;
-		    	}
-		    	map.moveCamera(CameraUpdateFactory.newLatLngZoom(firstPoint, 10));*/
+		    	//traceNormal();
 		    	
 		    	//tracé intéractif
-		    	currentPoint = new LatLng(images[0], images[1]);
-		    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point"));
-	    		map.getUiSettings().setScrollGesturesEnabled(false);
-	    		map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
+		    	traceInteractif();
 	    		
 		    	}
+		    	map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    }
 	  
-		  CancelableCallback MyCancelableCallback =
-				   new CancelableCallback(){
-	
-			  @Override
-				public void onCancel() {
-					map.getUiSettings().setScrollGesturesEnabled(true);
-				}
-	
-				@Override
-				public void onFinish() {
-					map.getUiSettings().setAllGesturesEnabled(true);
-					if(lastPoint != null) {
-						map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED)).setGeodesic(true);
-					}
-					lastPoint = currentPoint;
-					if(i<images.length-1) {
-						currentPoint = new LatLng(images[i], images[++i]);
-						i++;
-				    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point"));
-				    	map.getUiSettings().setScrollGesturesEnabled(false);
-			    		map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),3000,MyCancelableCallback);
-			    	} else {
-			    		i=2;
-			    		lastPoint = null;
-			    	}
-				}
-				  
-			};
+		  /*
 		    /*switch(requestCode) { 
 		    case SELECT_PHOTO:
 		        if(resultCode == RESULT_OK){  
