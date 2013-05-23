@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,7 +89,10 @@ public class MainActivity extends Activity {
 	 
 	        adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int which) {
-
+	            	Intent intent = new Intent();
+	            	intent.setAction(Intent.ACTION_VIEW);
+	            	intent.setDataAndType(Uri.parse("file://" + markerClicked.getSnippet()), "image/*");
+	            	startActivity(intent);
 	            } });
 	        
 	        return adb;
@@ -194,10 +198,10 @@ public class MainActivity extends Activity {
 		    	polylineOnMaps = new ArrayList<Polyline>();
 		    	
 		    	// tracé normal
-		    	//traceNormal();
+		    	traceNormal();
 		    	
 		    	//tracé intéractif
-		    	traceInteractif();
+		    	//traceInteractif();
 	    		
 		    	}
 		    }
