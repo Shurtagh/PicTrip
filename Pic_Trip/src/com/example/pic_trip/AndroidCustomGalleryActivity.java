@@ -29,11 +29,15 @@ public class AndroidCustomGalleryActivity extends Activity {
     float[][] tab = new float[200][2];
     MultipleImages list = new MultipleImages();
     ArrayList<ObjetImage> imagesToSend = list.getImages();
+    String[] pathes = null;
  
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        pathes = getIntent().getExtras().getStringArray("pathes");
+        
         setContentView(R.layout.gallery);
  
         final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.DATE_TAKEN };
@@ -164,6 +168,16 @@ public class AndroidCustomGalleryActivity extends Activity {
             });
             holder.imageview.setImageBitmap(thumbnails[position]);
             holder.checkbox.setChecked(thumbnailsselection[position]);
+            if(pathes != null) {
+            	for(String s : pathes) {
+            		if (s != null) {
+            			if(s.equals(arrPath[position])) {
+            				holder.checkbox.setChecked(true);
+            				thumbnailsselection[position] = true;
+            			}
+            		}
+            	}
+            }
             holder.id = position;
             return convertView;
         }

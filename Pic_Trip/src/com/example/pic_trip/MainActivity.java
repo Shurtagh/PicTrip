@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
 	private Marker markerClicked;
 	private ArrayList<Polyline> polylineOnMaps = new ArrayList<Polyline>();
 	private ArrayList<Marker> markerOnMaps = new ArrayList<Marker>();
+	private String path[] = new String[200];
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -56,13 +57,14 @@ public class MainActivity extends Activity {
 		button.setOnClickListener(new Button.OnClickListener() {  
 	        public void onClick(View v) {
 	        	intent = new Intent(MainActivity.this, AndroidCustomGalleryActivity.class);
+	        	intent.putExtra("pathes", path);
 	            startActivityForResult(intent, 100); 
 	         }
 	    });
 	  } 
 	  
 	  private AlertDialog.Builder createDialog() {
-		  //On instancie notre layout en tant que View
+		    //On instancie notre layout en tant que View
 	        LayoutInflater factory = LayoutInflater.from(this);
 	        final View alertDialogView = factory.inflate(R.layout.alertdialogperso, null);
 	 
@@ -82,6 +84,13 @@ public class MainActivity extends Activity {
 	            		line.remove();
 	            	}
 	            	polylineOnMaps = new ArrayList<Polyline>();
+	            	for(int ind=0;ind<path.length;ind++) {
+	            		if(path[ind] != null) {
+	            			if(path[ind].equals(markerClicked.getSnippet())) {
+	            				path[ind] = null;
+	            			}
+	            		}
+	            	}
 	            	markerOnMaps.remove(markerClicked);
 	            	markerClicked.remove();
 	            	updatePolyline();
@@ -127,6 +136,7 @@ public class MainActivity extends Activity {
 	    			first = false;
 	    		}
 	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+	    		path[i] = result.get(i).getImagePath();
 	    		markerOnMaps.add(m);
 	    		if(lastPoint != null) {
 	    			Polyline line = map.addPolyline(new PolylineOptions()
@@ -163,6 +173,7 @@ public class MainActivity extends Activity {
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
 					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+					  path[i] = result.get(i).getImagePath();
 					  markerOnMaps.add(m);
 					  m.showInfoWindow();
 					  i++;
@@ -189,20 +200,20 @@ public class MainActivity extends Activity {
 	  
 	  protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
 		    super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
-		    map.clear();
 		    Bundle bundle = imageReturnedIntent.getExtras();
 		    if(bundle!=null) {
-		    	map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+		    	map.clear();
+	    		map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    	result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
-		    	
 		    	polylineOnMaps = new ArrayList<Polyline>();
+		    	markerOnMaps = new ArrayList<Marker>();
+		    	path = new String[200];
 		    	
 		    	// tracé normal
 		    	traceNormal();
 		    	
 		    	//tracé intéractif
 		    	//traceInteractif();
-	    		
 		    	}
 		    }
 }
