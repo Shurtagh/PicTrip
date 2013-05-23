@@ -12,19 +12,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
  
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnMapLongClickListener {
 	private GoogleMap map;
 	private Intent intent;
 	private LatLng currentPoint;
@@ -37,6 +41,7 @@ public class MainActivity extends Activity {
 	private ArrayList<Polyline> polylineOnMaps = new ArrayList<Polyline>();
 	private ArrayList<Marker> markerOnMaps = new ArrayList<Marker>();
 	private String path[] = new String[200];
+	private ArrayList<Marker> comMarker = new ArrayList<Marker>();
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,8 @@ public class MainActivity extends Activity {
 	    setContentView(R.layout.activity_main);
 	    Button button = ((Button) findViewById(R.id.addPictures));
 	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+	    
+	    map.setOnMapLongClickListener(MainActivity.this); 
 	    
 	    map.setOnInfoWindowClickListener(
 		  new OnInfoWindowClickListener(){
@@ -62,6 +69,41 @@ public class MainActivity extends Activity {
 	         }
 	    });
 	  } 
+	  
+	  @Override
+	  public void onMapLongClick(LatLng point) {
+	           Marker m = map.addMarker(new MarkerOptions().position(point).title("Point").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+	           markerClicked = m;
+	           createDialogForCommentaire().show();
+	      }
+	  
+	  private AlertDialog.Builder createDialogForCommentaire() {
+		//On instancie notre layout en tant que View
+	        LayoutInflater factory = LayoutInflater.from(this);
+	        final View alertDialogView = factory.inflate(R.layout.popupcommentaire, null);
+	 
+	        //Création de l'AlertDialog
+	        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+	 
+	        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+	        adb.setView(alertDialogView);
+	 
+	        //On donne un titre à l'AlertDialog
+	        adb.setTitle("Commentaire");
+	 
+	        //On modifie l'icône de l'AlertDialog pour le fun ;)
+	        adb.setIcon(android.R.drawable.ic_dialog_alert);
+	 
+	        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
+	        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) {
+	            	//Lorsque l'on cliquera sur le bouton "OK", on récupère l'EditText correspondant à notre vue personnalisée (cad à alertDialogView)
+	            	EditText et = (EditText)alertDialogView.findViewById(R.id.EditText1);
+	            	markerClicked.setSnippet(et.getText().toString());
+	            	comMarker.add(markerClicked);
+	          } });
+	        return adb;
+	    }
 	  
 	  private AlertDialog.Builder createDialog() {
 		    //On instancie notre layout en tant que View
@@ -209,11 +251,21 @@ public class MainActivity extends Activity {
 		    	markerOnMaps = new ArrayList<Marker>();
 		    	path = new String[200];
 		    	
-		    	// tracé normal
-		    	traceNormal();
+		    	for(Marker m : comMarker) {
+		    		map.addMarker(new MarkerOptions()
+		            .position(new LatLng(m.getPosition().latitude, m.getPosition().longitude))
+		            .title(m.getTitle())
+		            .snippet(m.getSnippet())
+		            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+		    	}
 		    	
-		    	//tracé intéractif
-		    	//traceInteractif();
+		    	if(result.size()>0) {
+		    		if(imageReturnedIntent.getExtras().getBoolean("interactif")) {
+		    			traceInteractif();
+		    		} else {
+		    			traceNormal();
+		    		}
 		    	}
 		    }
+      }
 }

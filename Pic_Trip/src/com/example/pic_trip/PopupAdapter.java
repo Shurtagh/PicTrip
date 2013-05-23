@@ -32,16 +32,17 @@ class PopupAdapter implements InfoWindowAdapter {
 
     tv.setText(marker.getTitle());
     tv=(TextView)popup.findViewById(R.id.snippet);
-    //tv.setText(marker.getSnippet());
-    
-    File imgFile = new  File(marker.getSnippet());
-    if(imgFile.exists()){
-        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
-        //ImageView myImage = (ImageView) findViewById(R.id.imageviewTest);
-        //myImage.setImageBitmap(myBitmap);
-        ImageView image = (ImageView)popup.findViewById(R.id.icon);
-        image.setImageBitmap(Bitmap.createScaledBitmap(myBitmap, 200, 320, false));
+    if(marker.getSnippet() != null) {
+    	if(marker.getSnippet().toString().startsWith("/")) {
+    		File imgFile = new  File(marker.getSnippet());
+    		if(imgFile.exists()){
+    			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+    			ImageView image = (ImageView)popup.findViewById(R.id.icon);
+    			image.setImageBitmap(Bitmap.createScaledBitmap(myBitmap, 200, 320, false));
+    		}
+    	} else {
+    		tv.setText(marker.getSnippet());
+    	}
     }
     return(popup);
   }

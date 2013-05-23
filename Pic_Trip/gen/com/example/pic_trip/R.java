@@ -182,13 +182,14 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020018;
     }
     public static final class id {
-        public static final int PhoneImageGrid=0x7f05000a;
-        public static final int TextView1=0x7f050008;
-        public static final int action_settings=0x7f050010;
+        public static final int EditText1=0x7f050010;
+        public static final int PhoneImageGrid=0x7f050008;
+        public static final int TextView1=0x7f050007;
+        public static final int action_settings=0x7f050011;
         public static final int addPictures=0x7f050006;
-        public static final int addPoints=0x7f050007;
         public static final int hybrid=0x7f050004;
         public static final int icon=0x7f05000d;
+        public static final int interactif=0x7f05000a;
         public static final int itemCheckBox=0x7f05000c;
         public static final int map=0x7f050005;
         public static final int none=0x7f050000;
@@ -206,6 +207,7 @@ containing a value of this type.
         public static final int gallery=0x7f030002;
         public static final int galleryitem=0x7f030003;
         public static final int popup=0x7f030004;
+        public static final int popupcommentaire=0x7f030005;
     }
     public static final class menu {
         public static final int main=0x7f090000;

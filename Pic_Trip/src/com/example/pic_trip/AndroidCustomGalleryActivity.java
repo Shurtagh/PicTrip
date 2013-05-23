@@ -96,6 +96,40 @@ public class AndroidCustomGalleryActivity extends Activity {
             	//b.putFloatArray("Images", finalTab);
             	//ObjetImage image = new ObjetImage(1.0f, 3.0f, "path");
             	intent.putExtra("result", imagesToSend);
+            	intent.putExtra("interactif", false);
+                
+            	//intent.putExtras(b);
+                setResult(RESULT_OK, intent);
+                finish();
+                
+            }
+        });
+        
+        final Button interactifBtn = (Button) findViewById(R.id.interactif);
+        interactifBtn.setOnClickListener(new OnClickListener() {
+ 
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+            	final int len = thumbnailsselection.length;
+            	int nb = 0;
+            	for (int i=0; i<len; i++) {
+                    if (thumbnailsselection[i]) {
+                    	nb++;
+                    }
+                }
+                for (int i=0; i<len; i++)
+                {
+                    if (thumbnailsselection[i]){
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i]));
+                    }
+                }
+            	Intent intent = new Intent(getBaseContext(), MainActivity.class);
+            	
+            	//Bundle b=new Bundle();
+            	//b.putFloatArray("Images", finalTab);
+            	//ObjetImage image = new ObjetImage(1.0f, 3.0f, "path");
+            	intent.putExtra("result", imagesToSend);
+            	intent.putExtra("interactif", true);
                 
             	//intent.putExtras(b);
                 setResult(RESULT_OK, intent);

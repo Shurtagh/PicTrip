@@ -15,14 +15,15 @@
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true"
+    android:background="@android:color/darker_gray"
     android:text="Ajouter des photos" />
 
-<Button
+<!--  <Button
     android:id="@+id/addPoints"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_toRightOf="@+id/addPictures"
-    android:text="Ajouter des points" />
+    android:text="Ajouter des points" /> -->
 
 </RelativeLayout>
