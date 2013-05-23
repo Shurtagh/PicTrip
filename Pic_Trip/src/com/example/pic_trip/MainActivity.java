@@ -3,23 +3,28 @@ package com.example.pic_trip;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
  
 public class MainActivity extends Activity {
 	private GoogleMap map;
-	private static final int SELECT_PHOTO = 1;
 	private Intent intent;
 	private LatLng currentPoint;
 	private LatLng lastPoint = null;
@@ -27,6 +32,9 @@ public class MainActivity extends Activity {
 	private float[] images;
 	private ArrayList<ObjetImage> result;
 	private CancelableCallback MyCancelableCallback = null;
+	private Marker markerClicked;
+	private ArrayList<Polyline> polylineOnMaps = new ArrayList<Polyline>();
+	private ArrayList<Marker> markerOnMaps = new ArrayList<Marker>();
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,16 @@ public class MainActivity extends Activity {
 	    setContentView(R.layout.activity_main);
 	    Button button = ((Button) findViewById(R.id.addPictures));
 	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+	    
+	    map.setOnInfoWindowClickListener(
+		  new OnInfoWindowClickListener(){
+		    public void onInfoWindowClick(Marker marker){
+		    	markerClicked = marker;
+		    	createDialog().show();
+		    }
+		  }
+		);
+	    
 		button.setOnClickListener(new Button.OnClickListener() {  
 	        public void onClick(View v) {
 	        	intent = new Intent(MainActivity.this, AndroidCustomGalleryActivity.class);
@@ -41,6 +59,58 @@ public class MainActivity extends Activity {
 	         }
 	    });
 	  } 
+	  
+	  private AlertDialog.Builder createDialog() {
+		  //On instancie notre layout en tant que View
+	        LayoutInflater factory = LayoutInflater.from(this);
+	        final View alertDialogView = factory.inflate(R.layout.alertdialogperso, null);
+	 
+	        //Création de l'AlertDialog
+	    	AlertDialog.Builder adb = new AlertDialog.Builder(this);
+	 
+	        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+	        adb.setView(alertDialogView);
+	 
+	        //On donne un titre à l'AlertDialog
+	        adb.setTitle("Information");
+	        adb.setCancelable(true);
+	        
+	        adb.setNegativeButton("Supprimer", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) {
+	            	for(Polyline line : polylineOnMaps) {
+	            		line.remove();
+	            	}
+	            	polylineOnMaps = new ArrayList<Polyline>();
+	            	markerOnMaps.remove(markerClicked);
+	            	markerClicked.remove();
+	            	updatePolyline();
+	          } });
+	 
+	        adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) {
+
+	            } });
+	        
+	        return adb;
+	  }
+	  
+	  private void updatePolyline() {
+		  int p=0;
+		  do {
+			  if(p<markerOnMaps.size()-1) {
+				  LatLng firstPoint = new LatLng(markerOnMaps.get(p).getPosition().latitude, markerOnMaps.get(p).getPosition().longitude);
+				  p++;
+				  LatLng secondPoint = new LatLng(markerOnMaps.get(p).getPosition().latitude, markerOnMaps.get(p).getPosition().longitude);
+				  Polyline line = map.addPolyline(new PolylineOptions()
+	 		     .add(firstPoint,secondPoint)
+	 		     .width(4)
+	 		     .color(Color.RED));
+	 			polylineOnMaps.add(line);
+			  } else {
+				  p++;
+			  }
+		  } while(p<markerOnMaps.size());
+	  }
 	  
 	  private void traceNormal() {
 		  LatLng lastPoint = null;
@@ -52,9 +122,14 @@ public class MainActivity extends Activity {
 	    			firstPoint = currentPoint;
 	    			first = false;
 	    		}
-	    		map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+	    		markerOnMaps.add(m);
 	    		if(lastPoint != null) {
-	    			map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED));
+	    			Polyline line = map.addPolyline(new PolylineOptions()
+	    		     .add(lastPoint, currentPoint)
+	    		     .width(4)
+	    		     .color(Color.RED));
+	    			polylineOnMaps.add(line);
 	    		}
 	    		lastPoint = currentPoint;
 	    	}
@@ -74,12 +149,18 @@ public class MainActivity extends Activity {
 			  public void onFinish() {
 				  map.getUiSettings().setAllGesturesEnabled(true);
 				  if(lastPoint != null) {
-					  map.addPolyline(new PolylineOptions().add(lastPoint, currentPoint).width(5).color(Color.RED)).setGeodesic(true);
+					  Polyline line = map.addPolyline(new PolylineOptions()
+		    		     .add(lastPoint, currentPoint)
+		    		     .width(4)
+		    		     .color(Color.RED));
+		    			polylineOnMaps.add(line);
 				  }
 				  lastPoint = currentPoint;
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
-					  map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath())).showInfoWindow();
+					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+					  markerOnMaps.add(m);
+					  m.showInfoWindow();
 					  i++;
 					  map.getUiSettings().setScrollGesturesEnabled(false);
 					  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
@@ -92,7 +173,9 @@ public class MainActivity extends Activity {
 		  };
 		  	
 		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
-	    	map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath())).showInfoWindow();
+	    	Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath()));
+	    	markerOnMaps.add(m);
+			m.showInfoWindow();
 	    	map.getUiSettings().setScrollGesturesEnabled(false);
 	    	map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
 	    	//map.setOnInfoWindowClickListener(this);
@@ -105,9 +188,10 @@ public class MainActivity extends Activity {
 		    map.clear();
 		    Bundle bundle = imageReturnedIntent.getExtras();
 		    if(bundle!=null) {
-		    	//images = bundle.getFloatArray("Images");
 		    	map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    	result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
+		    	
+		    	polylineOnMaps = new ArrayList<Polyline>();
 		    	
 		    	// tracé normal
 		    	//traceNormal();
@@ -117,36 +201,4 @@ public class MainActivity extends Activity {
 	    		
 		    	}
 		    }
-	  
-		  /*
-		    /*switch(requestCode) { 
-		    case SELECT_PHOTO:
-		        if(resultCode == RESULT_OK){  
-		            Uri selectedImage = imageReturnedIntent.getData();
-		            String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE};
-
-		            Cursor cursor = getContentResolver().query(
-		                               selectedImage, columns, null, null, null);
-		            cursor.moveToFirst();
-
-		            int columnIndex = cursor.getColumnIndex(columns[0]);
-		            String filePath = cursor.getString(columnIndex);
-		            
-		            int latitudeIndex = cursor.getColumnIndex(columns[1]);
-		            float latitudeToDisplay = cursor.getFloat(latitudeIndex);
-		            System.out.println(latitudeToDisplay+"\n");
-		            
-		            int longitudeIndex = cursor.getColumnIndex(columns[2]);
-		            float longitudeToDisplay = cursor.getFloat(longitudeIndex);
-		            System.out.println(longitudeToDisplay+"\n");
-		            
-		            LatLng POINT = new LatLng(latitudeToDisplay, longitudeToDisplay);
-		            map.addMarker(new MarkerOptions().position(POINT).title("Point")).showInfoWindow();
-		            map.moveCamera(CameraUpdateFactory.newLatLngZoom(POINT, 4));
-		            
-		            cursor.close();
-
-		            //Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-		        }
-		    }*/
 }
