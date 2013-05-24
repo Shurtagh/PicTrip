@@ -42,6 +42,8 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	private ArrayList<Marker> markerOnMaps = new ArrayList<Marker>();
 	private String path[] = new String[200];
 	private ArrayList<Marker> comMarker = new ArrayList<Marker>();
+	private String snippet;
+	private EditText et;
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -93,14 +95,22 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	 
 	        //On modifie l'icône de l'AlertDialog pour le fun ;)
 	        adb.setIcon(android.R.drawable.ic_dialog_alert);
+
+	        et = (EditText)alertDialogView.findViewById(R.id.EditText1);
+	        if(snippet != null) {
+	        	et.setText(snippet);
+	        	snippet = null;
+	        }
 	 
 	        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
 	        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int which) {
-	            	//Lorsque l'on cliquera sur le bouton "OK", on récupère l'EditText correspondant à notre vue personnalisée (cad à alertDialogView)
-	            	EditText et = (EditText)alertDialogView.findViewById(R.id.EditText1);
 	            	markerClicked.setSnippet(et.getText().toString());
-	            	comMarker.add(markerClicked);
+        			markerClicked.hideInfoWindow();
+        			markerClicked.showInfoWindow();
+        			if(!comMarker.contains(markerClicked)) {
+        				comMarker.add(markerClicked);
+        			}
 	          } });
 	        return adb;
 	    }
@@ -133,19 +143,34 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            			}
 	            		}
 	            	}
-	            	markerOnMaps.remove(markerClicked);
+	            	if(markerOnMaps.contains(markerClicked)) {
+	            		markerOnMaps.remove(markerClicked);
+	            	} else if (comMarker.contains(markerClicked)) {
+	            		comMarker.remove(markerClicked);
+	            	}
 	            	markerClicked.remove();
 	            	updatePolyline();
-	          } });
-	 
-	        adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
-	            public void onClick(DialogInterface dialog, int which) {
-	            	Intent intent = new Intent();
-	            	intent.setAction(Intent.ACTION_VIEW);
-	            	intent.setDataAndType(Uri.parse("file://" + markerClicked.getSnippet()), "image/*");
-	            	startActivity(intent);
-	            } });
+	            } 
+	       });
 	        
+	        
+	        if(markerClicked.getSnippet().toString().startsWith("/")) {
+	        	adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
+	        		public void onClick(DialogInterface dialog, int which) {
+	        			Intent intent = new Intent();
+	        			intent.setAction(Intent.ACTION_VIEW);
+	        			intent.setDataAndType(Uri.parse("file://" + markerClicked.getSnippet()), "image/*");
+	        			startActivity(intent);
+	        		} 
+	        	});
+	        } else {
+	        	adb.setPositiveButton("Modifier", new DialogInterface.OnClickListener() {
+	        		public void onClick(DialogInterface dialog, int which) {
+	        			snippet = markerClicked.getSnippet().toString();
+	        			createDialogForCommentaire().show();
+	        		} 
+	        	});
+	        }
 	        return adb;
 	  }
 	  
@@ -251,12 +276,20 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    	markerOnMaps = new ArrayList<Marker>();
 		    	path = new String[200];
 		    	
+		    	ArrayList<Marker> tmpMarker = new ArrayList<Marker>();
+		    	
 		    	for(Marker m : comMarker) {
-		    		map.addMarker(new MarkerOptions()
+		    		Marker tmp = map.addMarker(new MarkerOptions()
 		            .position(new LatLng(m.getPosition().latitude, m.getPosition().longitude))
 		            .title(m.getTitle())
 		            .snippet(m.getSnippet())
 		            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+		    		tmpMarker.add(tmp);
+		    	}
+		    	
+		    	comMarker = new ArrayList<Marker>();
+		    	for(Marker m : tmpMarker) {
+		    		comMarker.add(m);
 		    	}
 		    	
 		    	if(result.size()>0) {
