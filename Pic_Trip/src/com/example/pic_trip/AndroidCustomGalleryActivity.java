@@ -1,6 +1,7 @@
 package com.example.pic_trip;
  
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.app.Activity;
 import android.content.Context;
@@ -183,6 +184,15 @@ public class AndroidCustomGalleryActivity extends Activity {
                     if (thumbnailsselection[id]){
                         cb.setChecked(false);
                         thumbnailsselection[id] = false;
+                        if(pathes != null) {
+                        	for(String s : pathes) {
+                        		if (s != null) {
+                        			if(s.equals(arrPath[id])) {
+                        				pathes[Arrays.asList(pathes).indexOf(s)] = null;
+                        			}
+                        		}
+                        	}
+                        }
                     } else {
                         cb.setChecked(true);
                         thumbnailsselection[id] = true;

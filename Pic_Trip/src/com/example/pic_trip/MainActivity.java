@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	  
 	  @Override
 	  public void onMapLongClick(LatLng point) {
-	           Marker m = map.addMarker(new MarkerOptions().position(point).title("Point").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+	           Marker m = map.addMarker(new MarkerOptions().position(point).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 	           markerClicked = m;
 	           createDialogForCommentaire().show();
 	      }
@@ -108,7 +108,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            	markerClicked.setSnippet(et.getText().toString());
         			markerClicked.hideInfoWindow();
         			markerClicked.showInfoWindow();
-        			if(!comMarker.contains(markerClicked)) {
+        			if(!comMarker.contains(markerClicked) && markerClicked.getTitle() == null) {
         				comMarker.add(markerClicked);
         			}
 	          } });
@@ -138,7 +138,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            	polylineOnMaps = new ArrayList<Polyline>();
 	            	for(int ind=0;ind<path.length;ind++) {
 	            		if(path[ind] != null) {
-	            			if(path[ind].equals(markerClicked.getSnippet())) {
+	            			if(path[ind].equals(markerClicked.getTitle())) {
 	            				path[ind] = null;
 	            			}
 	            		}
@@ -153,24 +153,26 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            } 
 	       });
 	        
-	        
-	        if(markerClicked.getSnippet().toString().startsWith("/")) {
-	        	adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
-	        		public void onClick(DialogInterface dialog, int which) {
-	        			Intent intent = new Intent();
-	        			intent.setAction(Intent.ACTION_VIEW);
-	        			intent.setDataAndType(Uri.parse("file://" + markerClicked.getSnippet()), "image/*");
-	        			startActivity(intent);
-	        		} 
-	        	});
-	        } else {
-	        	adb.setPositiveButton("Modifier", new DialogInterface.OnClickListener() {
-	        		public void onClick(DialogInterface dialog, int which) {
-	        			snippet = markerClicked.getSnippet().toString();
-	        			createDialogForCommentaire().show();
-	        		} 
-	        	});
+	        if(markerClicked.getTitle() != null) {
+	        	 if(markerClicked.getTitle().toString().startsWith("/")) {
+	 	        	adb.setPositiveButton("Voir", new DialogInterface.OnClickListener() {
+	 	        		public void onClick(DialogInterface dialog, int which) {
+	 	        			Intent intent = new Intent();
+	 	        			intent.setAction(Intent.ACTION_VIEW);
+	 	        			intent.setDataAndType(Uri.parse("file://" + markerClicked.getTitle()), "image/*");
+	 	        			startActivity(intent);
+	 	        		} 
+	 	        	});
+	 	        }
 	        }
+        	adb.setNeutralButton("Modifier", new DialogInterface.OnClickListener() {
+        		public void onClick(DialogInterface dialog, int which) {
+        			if(markerClicked.getSnippet() != null) {
+        				snippet = markerClicked.getSnippet().toString();
+        			}
+        			createDialogForCommentaire().show();
+        		} 
+        	});
 	        return adb;
 	  }
 	  
@@ -202,7 +204,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    			firstPoint = currentPoint;
 	    			first = false;
 	    		}
-	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
 	    		path[i] = result.get(i).getImagePath();
 	    		markerOnMaps.add(m);
 	    		if(lastPoint != null) {
@@ -239,7 +241,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 				  lastPoint = currentPoint;
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
-					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(i).getImagePath()));
+					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
 					  path[i] = result.get(i).getImagePath();
 					  markerOnMaps.add(m);
 					  m.showInfoWindow();
@@ -255,7 +257,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		  };
 		  	
 		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
-	    	Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title("Point").snippet(result.get(0).getImagePath()));
+	    	Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(0).getImagePath()));
 	    	markerOnMaps.add(m);
 			m.showInfoWindow();
 	    	map.getUiSettings().setScrollGesturesEnabled(false);
