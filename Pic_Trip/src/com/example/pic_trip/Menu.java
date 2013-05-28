@@ -36,7 +36,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     ViewPager mViewPager;
     static Intent intent;
     
-    private static Context context = null;
+    static Context context = null;
     
     private static TravelDAO travelDAO = null;
 

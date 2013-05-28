@@ -30,14 +30,14 @@ public class AndroidCustomGalleryActivity extends Activity {
     float[][] tab = new float[200][2];
     MultipleImages list = new MultipleImages();
     ArrayList<ObjetImage> imagesToSend = list.getImages();
-    String[] pathes = null;
+    ArrayList<ObjetImage> imagesReceive;
  
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        pathes = getIntent().getExtras().getStringArray("pathes");
+        imagesReceive = (ArrayList<ObjetImage>)getIntent().getSerializableExtra("pathes");
         
         setContentView(R.layout.gallery);
  
@@ -85,21 +85,24 @@ public class AndroidCustomGalleryActivity extends Activity {
                     	nb++;
                     }
                 }
-                for (int i=0; i<len; i++)
+            	for (int i=0; i<len; i++)
                 {
                     if (thumbnailsselection[i]){
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i]));
+                    	String snippetToSend = null;
+                    	for(int k=0;k<imagesReceive.size();k++) {
+                        	if(imagesReceive.get(k).getImagePath() != null) {
+                        		if(imagesReceive.get(k).getImagePath().equals(arrPath[i])) {
+                        			snippetToSend = imagesReceive.get(k).getSnippet();
+                    			}
+                        	}
+                        }
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);
             	
-            	//Bundle b=new Bundle();
-            	//b.putFloatArray("Images", finalTab);
-            	//ObjetImage image = new ObjetImage(1.0f, 3.0f, "path");
             	intent.putExtra("result", imagesToSend);
             	intent.putExtra("interactif", false);
-                
-            	//intent.putExtras(b);
                 setResult(RESULT_OK, intent);
                 finish();
                 
@@ -121,18 +124,21 @@ public class AndroidCustomGalleryActivity extends Activity {
                 for (int i=0; i<len; i++)
                 {
                     if (thumbnailsselection[i]){
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i]));
+                    	String snippetToSend = null;
+                    	for(int k=0;k<imagesReceive.size();k++) {
+                        	if(imagesReceive.get(k).getImagePath() != null) {
+                        		if(imagesReceive.get(k).getImagePath().equals(arrPath[i])) {
+                        			snippetToSend = imagesReceive.get(k).getSnippet();
+                    			}
+                        	}
+                        }
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);
             	
-            	//Bundle b=new Bundle();
-            	//b.putFloatArray("Images", finalTab);
-            	//ObjetImage image = new ObjetImage(1.0f, 3.0f, "path");
             	intent.putExtra("result", imagesToSend);
             	intent.putExtra("interactif", true);
-                
-            	//intent.putExtras(b);
                 setResult(RESULT_OK, intent);
                 finish();
                 
@@ -184,13 +190,11 @@ public class AndroidCustomGalleryActivity extends Activity {
                     if (thumbnailsselection[id]){
                         cb.setChecked(false);
                         thumbnailsselection[id] = false;
-                        if(pathes != null) {
-                        	for(String s : pathes) {
-                        		if (s != null) {
-                        			if(s.equals(arrPath[id])) {
-                        				pathes[Arrays.asList(pathes).indexOf(s)] = null;
-                        			}
-                        		}
+                        for(int i=0;i<imagesReceive.size();i++) {
+                        	if(imagesReceive.get(i).getImagePath() != null) {
+                        		if(imagesReceive.get(i).getImagePath().equals(arrPath[id])) {
+                    				imagesReceive.remove(i);
+                    			}
                         	}
                         }
                     } else {
@@ -212,14 +216,13 @@ public class AndroidCustomGalleryActivity extends Activity {
             });
             holder.imageview.setImageBitmap(thumbnails[position]);
             holder.checkbox.setChecked(thumbnailsselection[position]);
-            if(pathes != null) {
-            	for(String s : pathes) {
-            		if (s != null) {
-            			if(s.equals(arrPath[position])) {
-            				holder.checkbox.setChecked(true);
-            				thumbnailsselection[position] = true;
-            			}
-            		}
+            
+            for(int i=0;i<imagesReceive.size();i++) {
+            	if(imagesReceive.get(i).getImagePath() != null) {
+            		if(imagesReceive.get(i).getImagePath().equals(arrPath[position])) {
+            			holder.checkbox.setChecked(true);
+        				thumbnailsselection[position] = true;
+        			}
             	}
             }
             holder.id = position;

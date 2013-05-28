@@ -2,6 +2,8 @@ package com.example.pic_trip;
 
 import java.util.ArrayList;
 
+import DAO.PointDAO;
+import ElementObject.Point;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -39,21 +41,27 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	private Marker markerClicked;
 	private ArrayList<Polyline> polylineOnMaps = new ArrayList<Polyline>();
 	private ArrayList<Marker> markerOnMaps = new ArrayList<Marker>();
-	private String path[] = new String[200];
+	ArrayList<ObjetImage> imagesOnTheMap = new ArrayList<ObjetImage>(); 
 	private ArrayList<Marker> comMarker = new ArrayList<Marker>();
 	private String snippet;
 	private EditText et;
-	private int tripId;
+	private int tripId = -1;
+	private PointDAO pointDAO;
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
+	    Menu.context = getApplicationContext();
+	    pointDAO = new PointDAO(Menu.getContext());
+	    
+	    result = new ArrayList<ObjetImage>();
+	    
 	    Intent int_ = getIntent();
 	    tripId = int_.getIntExtra("id", -1);
 	    
 	    setContentView(R.layout.activity_main);
-	    Button button = ((Button) findViewById(R.id.addPictures));
+	    Button add_photos = ((Button) findViewById(R.id.addPictures));
 	    Button diaporama = ((Button) findViewById(R.id.diaporama));
 	    Button enregistrer = ((Button) findViewById(R.id.enregistrer));
 	    
@@ -70,18 +78,56 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		  }
 		);
 	    
+	    //pointDAO.deleteAll();
+	    
+	    if(tripId != -1) {
+	    	ArrayList<Point> points = pointDAO.getByTravelId(tripId);
+	    	if(points != null) {
+	    		for(Point p : points) {
+	    			switch (p.getType_id()) {
+		    			case 1 :
+		    				result.add(new ObjetImage(p.getLatitude(), p.getLongitude(), p.getUri(), p.getComment()));
+		    			break;
+		    			case 2 :
+		    				Marker m = map.addMarker(new MarkerOptions().position(new LatLng(p.getLatitude(),p.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+		    				if(p.getComment() != null) {
+		    					m.setSnippet(p.getComment());
+		    				}
+		    				comMarker.add(m);
+		    			break;
+	    			}
+	    		}
+	    	}
+	    	if(result.size() > 0) {
+	    		traceNormal();
+	    	}
+	    }
+	    
+	    enregistrer.setOnClickListener(new Button.OnClickListener() {  
+	        public void onClick(View v) {
+	        	pointDAO.deleteAllPointOfTravel(tripId);
+	        	for(Marker m : markerOnMaps) {
+	        		Point p = new Point(tripId,1,"12/12/2012",(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle());
+	        		p.save();
+	        	}
+	        	for(Marker m : comMarker) {
+	        		Point p = new Point(tripId,2,"12/12/2012",(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle());
+	        		p.save();
+	        	}
+	        }
+	    });
+	    
 	    diaporama.setOnClickListener(new Button.OnClickListener() {  
 	        public void onClick(View v) {
 	        	Intent diapo = new Intent(MainActivity.this, SwipeActivity.class);
-	        	//intent.putExtra("pathes", path);
 	            startActivityForResult(diapo, 100); 
 	         }
 	    });
 	    
-		button.setOnClickListener(new Button.OnClickListener() {  
+		add_photos.setOnClickListener(new Button.OnClickListener() {  
 	        public void onClick(View v) {
 	        	intent = new Intent(MainActivity.this, AndroidCustomGalleryActivity.class);
-	        	intent.putExtra("pathes", path);
+	        	intent.putExtra("pathes", imagesOnTheMap);
 	            startActivityForResult(intent, 100); 
 	         }
 	    });
@@ -121,6 +167,13 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int which) {
 	            	markerClicked.setSnippet(et.getText().toString());
+	            	for(int k=0;k<imagesOnTheMap.size();k++) {
+                    	if(imagesOnTheMap.get(k).getImagePath() != null) {
+                    		if(imagesOnTheMap.get(k).getImagePath().equals(markerClicked.getTitle())) {
+                    			imagesOnTheMap.get(k).setSnippet(et.getText().toString());
+                			}
+                    	}
+                    }
         			markerClicked.hideInfoWindow();
         			markerClicked.showInfoWindow();
         			if(!comMarker.contains(markerClicked) && markerClicked.getTitle() == null) {
@@ -151,13 +204,15 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            		line.remove();
 	            	}
 	            	polylineOnMaps = new ArrayList<Polyline>();
-	            	for(int ind=0;ind<path.length;ind++) {
-	            		if(path[ind] != null) {
-	            			if(path[ind].equals(markerClicked.getTitle())) {
-	            				path[ind] = null;
+	            	
+	            	for(int ind=0;ind<imagesOnTheMap.size();ind++) {
+	            		if(imagesOnTheMap.get(i).getImagePath() != null) {
+	            			if(imagesOnTheMap.get(i).getImagePath().equals(markerClicked.getTitle())) {
+	            				imagesOnTheMap.remove(i);
 	            			}
 	            		}
 	            	}
+	            	
 	            	if(markerOnMaps.contains(markerClicked)) {
 	            		markerOnMaps.remove(markerClicked);
 	            	} else if (comMarker.contains(markerClicked)) {
@@ -210,6 +265,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	  }
 	  
 	  private void traceNormal() {
+		  map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		  LatLng lastPoint = null;
 	    	boolean first = true;
 	    	LatLng firstPoint = null;
@@ -219,8 +275,10 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    			firstPoint = currentPoint;
 	    			first = false;
 	    		}
-	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
-	    		path[i] = result.get(i).getImagePath();
+	    		Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()).snippet(result.get(i).getSnippet()));
+
+	    		imagesOnTheMap.add(new ObjetImage(result.get(i).getLatitude(), result.get(i).getLongitude(), result.get(i).getImagePath(), result.get(i).getSnippet()));
+
 	    		markerOnMaps.add(m);
 	    		if(lastPoint != null) {
 	    			Polyline line = map.addPolyline(new PolylineOptions()
@@ -235,6 +293,9 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	  }
 	  
 	  private void traceInteractif() {
+		  
+		  map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
+		  
 		  MyCancelableCallback =
 				  new CancelableCallback(){
 			  
@@ -257,7 +318,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
 					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
-					  path[i] = result.get(i).getImagePath();
+					  imagesOnTheMap.add(new ObjetImage(result.get(i).getLatitude(), result.get(i).getLongitude(), result.get(i).getImagePath(), result.get(i).getSnippet()));
 					  markerOnMaps.add(m);
 					  m.showInfoWindow();
 					  i++;
@@ -291,7 +352,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    	result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
 		    	polylineOnMaps = new ArrayList<Polyline>();
 		    	markerOnMaps = new ArrayList<Marker>();
-		    	path = new String[200];
+		    	imagesOnTheMap = new ArrayList<ObjetImage>();
 		    	
 		    	ArrayList<Marker> tmpMarker = new ArrayList<Marker>();
 		    	

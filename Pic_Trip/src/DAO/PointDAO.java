@@ -129,4 +129,8 @@ public class PointDAO extends DAO {
 	public void deletePoint(int id) {
 		mDb.delete(POINT_TABLE, POINT_ID + " = ?", new String[] {String.valueOf(id)});
 	}
+	
+	public void deleteAllPointOfTravel(int travel_id) {
+		mDb.delete(POINT_TABLE, POINT_TRAVEL_ID + " = ?", new String[] {String.valueOf(travel_id)});
+	}
 }

@@ -18,6 +18,10 @@ public class Point {
 	private String comment;
 	private String uri;
 	
+	public String toString() {
+		return travel_id + " " + type_id + " " + date_add + " " + latitude + " " + longitude + " " + comment + " " + uri;
+	}
+	
 	/*
 	 * 
 	 * GETTERS AND SETTERS
@@ -80,6 +84,16 @@ public class Point {
 	 */
 	public Point (int id, int travel_id, int type_id, String date_add, float latitude, float longitude, String comment, String uri) {
 		this.id = id;
+		this.travel_id = travel_id;
+		this.type_id = type_id;
+		this.date_add = date_add;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.comment = comment;
+		this.uri = uri;
+	}
+	
+	public Point (int travel_id, int type_id, String date_add, float latitude, float longitude, String comment, String uri) {
 		this.travel_id = travel_id;
 		this.type_id = type_id;
 		this.date_add = date_add;
