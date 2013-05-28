@@ -1,4 +1,8 @@
-package com.example.pic_trip;
+package ElementObject;
+
+import DAO.TravelDAO;
+
+import com.example.pic_trip.Menu;
 
 public class Travel {
 	
@@ -62,8 +66,11 @@ public class Travel {
 		this.description = description;
 	}
 	
-	public Travel () {
-		
+	public Travel (String name, String date_start, String date_stop, String description) {
+		this.name = name;
+		this.date_start = date_start;
+		this.date_stop = date_stop;
+		this.description = description;
 	}
 	
 	/*
@@ -73,18 +80,22 @@ public class Travel {
 	 */
 	
 	public void save() {
-		//TravelDAO TDAO = new TravelDAO();
+		TravelDAO TDAO = new TravelDAO(Menu.getContext());
 		if (this.id == -1) {
-			//TDAO.addTravel(this);
+			TDAO.addTravel(this);
 		} else {
-			//TDAO.updateTravel(this);
+			TDAO.updateTravel(this);
 		}
 	}
 	
 	public void delete() {
 		if (this.id != -1) {
-			//TravelDAO TDAO = new TravelDAO();
-			//TDAO.deleteTravel(this.id);
+			TravelDAO TDAO = new TravelDAO(Menu.getContext());
+			TDAO.deleteTravel(this.id);
 		}
+	}
+	
+	public String toString() {
+		return getName() + " " + getDate_start() + " " + getDate_stop() + " " + getDescription();
 	}
 }

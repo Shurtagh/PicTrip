@@ -1,7 +1,9 @@
-package com.example.pic_trip;
+package DAO;
 
 import java.util.ArrayList;
 
+
+import ElementObject.Travel;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,6 +27,7 @@ public class TravelDAO extends DAO {
 	
 	public Travel getById(int id) {
 		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_ID + " = ?", new String[]{String.valueOf(id)});
+		c.moveToFirst();
 		if (c.getCount() > 1 || c.getCount() == 0) {
 			return null;
 		} else {
@@ -74,6 +77,24 @@ public class TravelDAO extends DAO {
 		}
 	}
 	
+	public ArrayList<Travel> getAll() {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE, null);
+		if (c.getCount() == 0) {
+			return null;
+		} else {
+			ArrayList<Travel> list = new ArrayList<Travel>();
+			while (c.moveToNext()) {
+				list.add(new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+			}
+			c.close();
+			return list;
+		}
+	}
+	
+	public void deleteAll() {
+		mDb.delete(TRAVEL_TABLE, null, null);
+	}
+	
 	public void addTravel(Travel t) {
 		if (t.getId() == -1) {
 			ContentValues value = new ContentValues();
@@ -96,7 +117,7 @@ public class TravelDAO extends DAO {
 		}
 	}
 	
-	public void deletePoint(int id) {
+	public void deleteTravel(int id) {
 		mDb.delete(TRAVEL_TABLE, TRAVEL_ID + " = ?", new String[] {String.valueOf(id)});
 	}
 }

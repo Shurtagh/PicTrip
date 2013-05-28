@@ -1,7 +1,9 @@
-package com.example.pic_trip;
+package DAO;
 
 import java.util.ArrayList;
 
+
+import ElementObject.Point;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +30,7 @@ public class PointDAO extends DAO {
 	
 	public Point getById(int id) {
 		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_ID + " = ?", new String[]{String.valueOf(id)});
+		c.moveToFirst();
 		if (c.getCount() > 1 || c.getCount() == 0) {
 			return null;
 		} else {
@@ -75,6 +78,24 @@ public class PointDAO extends DAO {
 			c.close();
 			return list;
 		}
+	}
+	
+	public ArrayList<Point> getAll() {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE, null);
+		if (c.getCount() == 0) {
+			return null;
+		} else {
+			ArrayList<Point> list = new ArrayList<Point>();
+			while (c.moveToNext()) {
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7)));
+			}
+			c.close();
+			return list;
+		}
+	}
+
+	public void deleteAll() {
+		mDb.delete(POINT_TABLE, null, null);
 	}
 	
 	public void addPoint(Point p) {

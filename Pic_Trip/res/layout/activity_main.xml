@@ -18,12 +18,20 @@
     android:background="@android:color/darker_gray"
     android:text="Ajouter des photos" />
 
-<!--  <Button
-    android:id="@+id/addPoints"
+<Button
+    android:id="@+id/diaporama"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_toRightOf="@+id/addPictures"
-    android:text="Ajouter des points" /> -->
+    android:text="Lancer diaporama" />
+
+<Button
+    android:id="@+id/enregistrer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_toRightOf="@+id/diaporama"
+    android:text="Enregistrer" />
 
 </RelativeLayout>

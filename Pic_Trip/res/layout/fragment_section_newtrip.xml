@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent"> 
+
+        <TextView  
+		    android:id="@+id/TextViewFormDesc"  
+		    android:layout_width="wrap_content"  
+		    android:layout_height="wrap_content"  
+		    android:text="@string/form_desc"  
+		    android:textSize="10pt">  
+		</TextView>
+		
+        <EditText  
+		    android:id="@+id/EditTextTripTitle"
+		    android:layout_height="wrap_content"
+		    android:hint="@string/form_trip_title"
+		    android:inputType="textPersonName"
+		    android:layout_width="fill_parent">  
+		</EditText>
+		
+        <EditText
+            android:id="@+id/EditTripStartDate"
+            android:layout_height="wrap_content"
+		    android:hint="@string/form_trip_start_date"
+            android:inputType="date"
+		    android:layout_width="fill_parent">  
+		</EditText>
+		
+        <EditText
+            android:id="@+id/EditTripEndDate"
+            android:layout_height="wrap_content"
+		    android:hint="@string/form_trip_end_date"
+            android:inputType="date"
+		    android:layout_width="fill_parent">  
+		</EditText>        
+
+        <EditText
+            android:id="@+id/EditTextTripDesc"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/form_trip_desc"
+            android:inputType="textMultiLine"
+            android:lines="5" >
+
+            <requestFocus />
+        </EditText>
+		
+        <Button  
+		    android:id="@+id/ButtonSendForm"  
+		    android:layout_height="wrap_content"  
+		    android:text="@string/form_button"  
+		    android:onClick="createTrip"  
+		    android:layout_width="fill_parent">  
+		</Button>
+        
+    </LinearLayout>

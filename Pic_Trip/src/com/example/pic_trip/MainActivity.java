@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,12 +43,20 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	private ArrayList<Marker> comMarker = new ArrayList<Marker>();
 	private String snippet;
 	private EditText et;
+	private int tripId;
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    
+	    Intent int_ = getIntent();
+	    tripId = int_.getIntExtra("id", -1);
+	    
 	    setContentView(R.layout.activity_main);
 	    Button button = ((Button) findViewById(R.id.addPictures));
+	    Button diaporama = ((Button) findViewById(R.id.diaporama));
+	    Button enregistrer = ((Button) findViewById(R.id.enregistrer));
+	    
 	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 	    
 	    map.setOnMapLongClickListener(MainActivity.this); 
@@ -62,6 +69,14 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    }
 		  }
 		);
+	    
+	    diaporama.setOnClickListener(new Button.OnClickListener() {  
+	        public void onClick(View v) {
+	        	Intent diapo = new Intent(MainActivity.this, SwipeActivity.class);
+	        	//intent.putExtra("pathes", path);
+	            startActivityForResult(diapo, 100); 
+	         }
+	    });
 	    
 		button.setOnClickListener(new Button.OnClickListener() {  
 	        public void onClick(View v) {

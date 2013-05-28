@@ -57,36 +57,36 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 	 * Requête de création de table
 	 */
 	
-	private String CREATE_TRAVELS_STATEMENT = "CREATE " + TRAVEL_TABLE + " (" +
+	private String CREATE_TRAVELS_STATEMENT = "CREATE TABLE " + TRAVEL_TABLE + " (" +
 											  TRAVEL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-											  TRAVEL_NAME + "TEXT, " +
-											  TRAVEL_DATE_START + "TEXT, " +
-											  TRAVEL_DATE_STOP + "TEXT, " +
-											  TRAVEL_DESCRIPTION + "TEXT);";
-	private String CREATE_POINTS_STATEMENT = "CREATE " + POINT_TABLE + " (" +
-											 POINT_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-											 POINT_TRAVEL_ID + "INTEGER, " +
-										     POINT_TYPE_ID + "INTEGER, " +
-										     POINT_DATE_ADD + "TEXT, " +
-										     POINT_LATITUDE + "REAL, " +
-										     POINT_LONGITUDE + "REAL, " +
-										     POINT_COMMENT + "TEXT, " +
-										  	 POINT_URI + "TEXT, " +
+											  TRAVEL_NAME + " TEXT, " +
+											  TRAVEL_DATE_START + " TEXT, " +
+											  TRAVEL_DATE_STOP + " TEXT, " +
+											  TRAVEL_DESCRIPTION + " TEXT);";
+	private String CREATE_POINTS_STATEMENT = "CREATE TABLE " + POINT_TABLE + " (" +
+											 POINT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+											 POINT_TRAVEL_ID + " INTEGER, " +
+										     POINT_TYPE_ID + " INTEGER, " +
+										     POINT_DATE_ADD + " TEXT, " +
+										     POINT_LATITUDE + " REAL, " +
+										     POINT_LONGITUDE + " REAL, " +
+										     POINT_COMMENT + " TEXT, " +
+										  	 POINT_URI + " TEXT, " +
 										     "FOREIGN KEY (" + POINT_TRAVEL_ID + ") REFERENCES " + TRAVEL_TABLE + "(" + TRAVEL_ID + "), " + 
 										     "FOREIGN KEY (" + POINT_TYPE_ID + ") REFERENCES " + POINTTYPE_TABLE + "(" + POINTTYPE_ID + "));";
-	private String CREATE_POINTTYPES_STATEMENT = "CREATE " + POINTTYPE_TABLE + " (" +
-												 POINTTYPE_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-												 POINTTYPE_NAME + "TEXT, " +
-											     POINTTYPE_IMAGE + "TEXT, " +
-											  	 POINTTYPE_SHOW + "INTEGER);";
-	private String CREATE_TAGS_STATEMENT = "CREATE " + TAG_TABLE + " (" +
-										    TAG_ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-									        TAG_NAME + "TEXT, " +
-									        TAG_LEVEL + "INTEGER, " +
-									  	    TAG_SUPERIOR_ID + "INTEGER);";
-	private String CREATE_POINTSTOTAGS_STATEMENT = "CREATE " + POINTTOTAG_TABLE + " (" +
-												   POINTTOTAG_TAG_ID + "INTEGER, " +
-											  	   POINTTOTAG_POINT_ID + "INTEGER, " + 
+	private String CREATE_POINTTYPES_STATEMENT = "CREATE TABLE " + POINTTYPE_TABLE + " (" +
+												 POINTTYPE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+												 POINTTYPE_NAME + " TEXT, " +
+											     POINTTYPE_IMAGE + " TEXT, " +
+											  	 POINTTYPE_SHOW + " INTEGER);";
+	private String CREATE_TAGS_STATEMENT = "CREATE TABLE " + TAG_TABLE + " (" +
+										    TAG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+									        TAG_NAME + " TEXT, " +
+									        TAG_LEVEL + " INTEGER, " +
+									  	    TAG_SUPERIOR_ID + " INTEGER);";
+	private String CREATE_POINTSTOTAGS_STATEMENT = "CREATE TABLE " + POINTTOTAG_TABLE + " (" +
+												   POINTTOTAG_TAG_ID + " INTEGER, " +
+											  	   POINTTOTAG_POINT_ID + " INTEGER, " + 
 												   "PRIMARY KEY(" + POINTTOTAG_TAG_ID + ", " + POINTTOTAG_POINT_ID + "), " + 
 											  	   "FOREIGN KEY (" + POINTTOTAG_TAG_ID + ") REFERENCES " + TAG_TABLE + "(" + TAG_ID + "), " + 
 											  	   "FOREIGN KEY (" + POINTTOTAG_POINT_ID + ") REFERENCES " + POINT_TABLE + "(" + POINT_ID + "));";
