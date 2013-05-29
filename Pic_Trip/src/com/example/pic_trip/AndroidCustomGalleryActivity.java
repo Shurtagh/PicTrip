@@ -26,6 +26,7 @@ public class AndroidCustomGalleryActivity extends Activity {
     private Bitmap[] thumbnails;
     private boolean[] thumbnailsselection;
     private String[] arrPath;
+    private long[] dates_taken;
     private ImageAdapter imageAdapter;
     float[][] tab = new float[200][2];
     MultipleImages list = new MultipleImages();
@@ -50,6 +51,7 @@ public class AndroidCustomGalleryActivity extends Activity {
         this.count = imagecursor.getCount();
         this.thumbnails = new Bitmap[this.count];
         this.arrPath = new String[this.count];
+        this.dates_taken = new long[this.count];
         this.thumbnailsselection = new boolean[this.count];
         for (int i = 0; i < this.count; i++) {
             imagecursor.moveToPosition(i);
@@ -67,6 +69,10 @@ public class AndroidCustomGalleryActivity extends Activity {
             int longitudeIndex = imagecursor.getColumnIndex(columns[3]);
             float longitudeToDisplay = imagecursor.getFloat(longitudeIndex);
             tab[i][1] = longitudeToDisplay;
+            
+            int date_index = imagecursor.getColumnIndex(columns[4]);
+            long date = imagecursor.getLong(date_index);
+            dates_taken[i] = date;
         }
         GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
         imageAdapter = new ImageAdapter();
@@ -96,7 +102,8 @@ public class AndroidCustomGalleryActivity extends Activity {
                     			}
                         	}
                         }
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend));
+                    	System.out.println(tab[i][0] + " " + tab[i][1] + " " + arrPath[i] + " " + snippetToSend + " " + dates_taken[i]);
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i]));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -132,7 +139,7 @@ public class AndroidCustomGalleryActivity extends Activity {
                     			}
                         	}
                         }
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend));
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i]));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);

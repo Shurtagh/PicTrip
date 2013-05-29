@@ -11,8 +11,8 @@ public class Travel {
 	 */
 	private int id = -1;
 	private String name;
-	private String date_start;
-	private String date_stop;
+	private long date_start;
+	private long date_stop;
 	private String description;
 	
 	/*
@@ -33,16 +33,16 @@ public class Travel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getDate_start() {
+	public long getDate_start() {
 		return date_start;
 	}
-	public void setDate_start(String date_start) {
+	public void setDate_start(long date_start) {
 		this.date_start = date_start;
 	}
-	public String getDate_stop() {
+	public long getDate_stop() {
 		return date_stop;
 	}
-	public void setDate_stop(String date_stop) {
+	public void setDate_stop(long date_stop) {
 		this.date_stop = date_stop;
 	}
 	public String getDescription() {
@@ -58,7 +58,7 @@ public class Travel {
 	 * 
 	 */
 	
-	public Travel (int id, String name, String date_start, String date_stop, String description) {
+	public Travel (int id, String name, long date_start, long date_stop, String description) {
 		this.id = id;
 		this.name = name;
 		this.date_start = date_start;
@@ -66,11 +66,15 @@ public class Travel {
 		this.description = description;
 	}
 	
-	public Travel (String name, String date_start, String date_stop, String description) {
+	public Travel (String name, long date_start, long date_stop, String description) {
 		this.name = name;
 		this.date_start = date_start;
 		this.date_stop = date_stop;
 		this.description = description;
+	}
+	
+	public Travel () {
+		
 	}
 	
 	/*
@@ -93,9 +97,5 @@ public class Travel {
 			TravelDAO TDAO = new TravelDAO(Menu.getContext());
 			TDAO.deleteTravel(this.id);
 		}
-	}
-	
-	public String toString() {
-		return getName() + " " + getDate_start() + " " + getDate_stop() + " " + getDescription();
 	}
 }

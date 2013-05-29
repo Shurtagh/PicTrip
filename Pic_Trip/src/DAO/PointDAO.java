@@ -23,6 +23,7 @@ public class PointDAO extends DAO {
 	private String POINT_LONGITUDE = "longitude";
 	private String POINT_COMMENT = "comment";
 	private String POINT_URI = "uri";
+	private String POINT_ORDER = "order";
 	
 	public PointDAO(Context pContext) {
 		super(pContext);
@@ -34,18 +35,18 @@ public class PointDAO extends DAO {
 		if (c.getCount() > 1 || c.getCount() == 0) {
 			return null;
 		} else {
-			return new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7));
+			return new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8));
 		}
 	}
 	
 	public ArrayList<Point> getByTravelId(int travel_id) {
-		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_TRAVEL_ID + " = ?", new String[]{String.valueOf(travel_id)});
+		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_TRAVEL_ID + " = ? ORDER BY " + POINT_DATE_ADD, new String[]{String.valueOf(travel_id)});
 		if (c.getCount() == 0) {
 			return null;
 		} else {
 			ArrayList<Point> list = new ArrayList<Point>();
 			while (c.moveToNext()) {
-				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7)));
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
 			}
 			c.close();
 			return list;
@@ -59,7 +60,7 @@ public class PointDAO extends DAO {
 		} else {
 			ArrayList<Point> list = new ArrayList<Point>();
 			while (c.moveToNext()) {
-				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7)));
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
 			}
 			c.close();
 			return list;
@@ -73,7 +74,7 @@ public class PointDAO extends DAO {
 		} else {
 			ArrayList<Point> list = new ArrayList<Point>();
 			while (c.moveToNext()) {
-				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7)));
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
 			}
 			c.close();
 			return list;
@@ -87,7 +88,7 @@ public class PointDAO extends DAO {
 		} else {
 			ArrayList<Point> list = new ArrayList<Point>();
 			while (c.moveToNext()) {
-				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getString(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7)));
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
 			}
 			c.close();
 			return list;
@@ -108,6 +109,7 @@ public class PointDAO extends DAO {
 			value.put(POINT_LONGITUDE, p.getLongitude());
 			value.put(POINT_COMMENT, p.getComment());
 			value.put(POINT_URI, p.getUri());
+			value.put("`" + POINT_ORDER + "`", p.getOrder());
 			mDb.insert(POINT_TABLE, null, value);
 		}
 	}
@@ -122,6 +124,7 @@ public class PointDAO extends DAO {
 			value.put(POINT_LONGITUDE, p.getLongitude());
 			value.put(POINT_COMMENT, p.getComment());
 			value.put(POINT_URI, p.getUri());
+			value.put("`" + POINT_ORDER + "`", p.getOrder());
 			mDb.update(POINT_TABLE, value, POINT_ID + " = ?", new String[] {String.valueOf(p.getId())});
 		}
 	}

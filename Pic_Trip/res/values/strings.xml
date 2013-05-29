@@ -20,7 +20,7 @@
     <string name="presentation_button">Présenter</string>
     
     <string name="options_title">Options</string>
-    <string name="options_checkbox">Activer le GPS</string>
+    <string name="options_checkbox">Tracking GPS</string>
     <string name="options_button">Enregistrer</string>
     
     <string name="gallery_start_date">Date de début</string>

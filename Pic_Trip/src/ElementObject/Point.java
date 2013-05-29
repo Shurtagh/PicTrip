@@ -1,8 +1,8 @@
 package ElementObject;
 
-import com.example.pic_trip.Menu;
-
 import DAO.PointDAO;
+
+import com.example.pic_trip.Menu;
 
 public class Point {
 	
@@ -12,15 +12,12 @@ public class Point {
 	private int id = -1;
 	private int travel_id;
 	private int type_id;
-	private String date_add;
+	private long date_add;
 	private float latitude;
 	private float longitude;
 	private String comment;
 	private String uri;
-	
-	public String toString() {
-		return travel_id + " " + type_id + " " + date_add + " " + latitude + " " + longitude + " " + comment + " " + uri;
-	}
+	private int order;
 	
 	/*
 	 * 
@@ -46,10 +43,10 @@ public class Point {
 	public void setType_id(int type_id) {
 		this.type_id = type_id;
 	}
-	public String getDate_add() {
+	public long getDate_add() {
 		return date_add;
 	}
-	public void setDate_add(String date_add) {
+	public void setDate_add(long date_add) {
 		this.date_add = date_add;
 	}
 	public float getLatitude() {
@@ -76,13 +73,19 @@ public class Point {
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
+	}
 	
 	/*
 	 * 
 	 * CONSTRUCTEURS
 	 * 
 	 */
-	public Point (int id, int travel_id, int type_id, String date_add, float latitude, float longitude, String comment, String uri) {
+	public Point (int id, int travel_id, int type_id, long date_add, float latitude, float longitude, String comment, String uri, int order) {
 		this.id = id;
 		this.travel_id = travel_id;
 		this.type_id = type_id;
@@ -91,9 +94,10 @@ public class Point {
 		this.longitude = longitude;
 		this.comment = comment;
 		this.uri = uri;
+		this.order = order;
 	}
 	
-	public Point (int travel_id, int type_id, String date_add, float latitude, float longitude, String comment, String uri) {
+	public Point (int travel_id, int type_id, long date_add, float latitude, float longitude, String comment, String uri, int order) {
 		this.travel_id = travel_id;
 		this.type_id = type_id;
 		this.date_add = date_add;
@@ -101,6 +105,7 @@ public class Point {
 		this.longitude = longitude;
 		this.comment = comment;
 		this.uri = uri;
+		this.order = order;
 	}
 	
 	public Point () {

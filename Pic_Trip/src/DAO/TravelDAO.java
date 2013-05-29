@@ -31,7 +31,7 @@ public class TravelDAO extends DAO {
 		if (c.getCount() > 1 || c.getCount() == 0) {
 			return null;
 		} else {
-			return new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
+			return new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4));
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class TravelDAO extends DAO {
 		} else {
 			ArrayList<Travel> list = new ArrayList<Travel>();
 			while (c.moveToNext()) {
-				list.add(new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+				list.add(new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4)));
 			}
 			c.close();
 			return list;
@@ -56,7 +56,7 @@ public class TravelDAO extends DAO {
 		} else {
 			ArrayList<Travel> list = new ArrayList<Travel>();
 			while (c.moveToNext()) {
-				list.add(new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+				list.add(new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4)));
 			}
 			c.close();
 			return list;
@@ -70,7 +70,7 @@ public class TravelDAO extends DAO {
 		} else {
 			ArrayList<Travel> list = new ArrayList<Travel>();
 			while (c.moveToNext()) {
-				list.add(new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+				list.add(new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4)));
 			}
 			c.close();
 			return list;
@@ -84,7 +84,7 @@ public class TravelDAO extends DAO {
 		} else {
 			ArrayList<Travel> list = new ArrayList<Travel>();
 			while (c.moveToNext()) {
-				list.add(new Travel(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4)));
+				list.add(new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4)));
 			}
 			c.close();
 			return list;
@@ -97,6 +97,8 @@ public class TravelDAO extends DAO {
 	
 	public void addTravel(Travel t) {
 		if (t.getId() == -1) {
+			System.out.println(t.getName());
+			System.out.println(t.getDate_start());
 			ContentValues value = new ContentValues();
 			value.put(TRAVEL_NAME, t.getName());
 			value.put(TRAVEL_DATE_START, t.getDate_start());
@@ -119,5 +121,16 @@ public class TravelDAO extends DAO {
 	
 	public void deleteTravel(int id) {
 		mDb.delete(TRAVEL_TABLE, TRAVEL_ID + " = ?", new String[] {String.valueOf(id)});
+	}
+	
+	public Travel getCurrentTravel() {
+		long timestamp = System.currentTimeMillis();
+		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_DATE_START + " < ? AND " + TRAVEL_DATE_STOP + " > ? ORDER BY " + TRAVEL_DATE_STOP + " DESC LIMIT 0,1", new String[]{String.valueOf(timestamp), String.valueOf(timestamp)});
+		c.moveToFirst();
+		if (c.getCount() > 1 || c.getCount() == 0) {
+			return null;
+		} else {
+			return new Travel(c.getInt(0), c.getString(1), c.getLong(2), c.getLong(3), c.getString(4));
+		}
 	}
 }

@@ -1,7 +1,10 @@
 
 package com.example.pic_trip;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import DAO.TravelDAO;
@@ -18,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +57,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         intent = new Intent(Menu.this, MainActivity.class);
         Menu.context = getApplicationContext();
         travelDAO = new TravelDAO(Menu.getContext());
+        
+        //travelDAO.deleteAll();
         
         setContentView(R.layout.menu);
         
@@ -128,7 +134,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     	
     }
     
-    public void createTrip(View button) {  
+    public void createTrip(View button) throws ParseException {  
     	final EditText titleField = (EditText) findViewById(R.id.EditTextTripTitle);
     	String title = titleField.getText().toString();
     	final EditText startDateField = (EditText) findViewById(R.id.EditTripStartDate);
@@ -147,7 +153,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     		titleField.setBackgroundResource(R.color.White);
     	}
     	if (valid) {
-    		Travel t = new Travel(title, startDate, endDate, desc);
+    		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+    		Date debut = (Date) df.parse(startDate);
+    		Date fin = (Date) df.parse(endDate);
+    		Travel t = new Travel(title, debut.getTime(), fin.getTime(), desc);
     		t.save();
     		AlertDialog.Builder adb = new AlertDialog.Builder(this);
     		adb.setTitle("New Trip");
@@ -190,10 +199,18 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     	
     	boolean gpsActivate = gps.isChecked();
     	
-    	//gpsToggle(gpsActivate);
+    	Intent gps_ = new Intent(Menu.this, Gps.class);
+
     	String tmp = "activé";
-    	if (!gpsActivate)
-    		tmp = "desactivé";
+
+    	if (gpsActivate) {
+    		gps_.putExtra("enable", true);
+        	startActivity(gps_);
+    	} else {
+    		gps_.putExtra("enable", false);
+        	startActivity(gps_);
+        	tmp = "desactivé";
+    	}
 		new AlertDialog.Builder(this)
 				.setTitle("Options")
 				.setMessage("gps : " + tmp)
@@ -201,7 +218,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 				.show();
     }
 
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+	public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
 
         public AppSectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -290,13 +307,16 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
             HashMap<String, String> map;
             
     		ArrayList<Travel> list =  travelDAO.getAll();
-    		for(Travel tr : list) {
-    			map = new HashMap<String, String>();
-    	        map.put("date_debut", tr.getDate_start());
-    	        map.put("date_fin", tr.getDate_stop());
-    	        map.put("title", tr.getName());
-    	        map.put("desc", tr.getDescription());
-    	        listItem.add(map);
+    		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    		if(list != null) {
+	    		for(Travel tr : list) {
+	    			map = new HashMap<String, String>();
+	    	        map.put("date_debut", sdf.format(new Date(tr.getDate_start())));
+	    	        map.put("date_fin", sdf.format(new Date(tr.getDate_stop())));
+	    	        map.put("title", tr.getName());
+	    	        map.put("desc", tr.getDescription());
+	    	        listItem.add(map);
+	    		}
     		}
     		
             //Création d'un SimpleAdapter qui se chargera de mettre les items présent dans notre list (listItem) dans la vue triplist

@@ -1,6 +1,5 @@
 package ElementObject;
 
-import DAO.PointDAO;
 import DAO.PointTypeDAO;
 
 import com.example.pic_trip.Menu;

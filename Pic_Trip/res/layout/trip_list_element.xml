@@ -8,7 +8,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/Layout_dates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,11 +22,12 @@
             <TextView
                 android:id="@+id/TripDateFin"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/TripDateDebut"/>
 
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/TripDesc"

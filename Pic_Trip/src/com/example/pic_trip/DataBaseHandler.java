@@ -1,5 +1,6 @@
 package com.example.pic_trip;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -36,6 +37,7 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 	private String POINT_LONGITUDE = "longitude";
 	private String POINT_COMMENT = "comment";
 	private String POINT_URI = "uri";
+	private String POINT_ORDER = "order";
 	
 	//Point_types
 	private String POINTTYPE_ID = "id";
@@ -60,18 +62,19 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 	private String CREATE_TRAVELS_STATEMENT = "CREATE TABLE " + TRAVEL_TABLE + " (" +
 											  TRAVEL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 											  TRAVEL_NAME + " TEXT, " +
-											  TRAVEL_DATE_START + " TEXT, " +
-											  TRAVEL_DATE_STOP + " TEXT, " +
+											  TRAVEL_DATE_START + " INTEGER, " +
+											  TRAVEL_DATE_STOP + " INTEGER, " +
 											  TRAVEL_DESCRIPTION + " TEXT);";
 	private String CREATE_POINTS_STATEMENT = "CREATE TABLE " + POINT_TABLE + " (" +
 											 POINT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 											 POINT_TRAVEL_ID + " INTEGER, " +
 										     POINT_TYPE_ID + " INTEGER, " +
-										     POINT_DATE_ADD + " TEXT, " +
+										     POINT_DATE_ADD + " INTEGER, " +
 										     POINT_LATITUDE + " REAL, " +
 										     POINT_LONGITUDE + " REAL, " +
 										     POINT_COMMENT + " TEXT, " +
 										  	 POINT_URI + " TEXT, " +
+										     "`" + POINT_ORDER + "` INTEGER, " +
 										     "FOREIGN KEY (" + POINT_TRAVEL_ID + ") REFERENCES " + TRAVEL_TABLE + "(" + TRAVEL_ID + "), " + 
 										     "FOREIGN KEY (" + POINT_TYPE_ID + ") REFERENCES " + POINTTYPE_TABLE + "(" + POINTTYPE_ID + "));";
 	private String CREATE_POINTTYPES_STATEMENT = "CREATE TABLE " + POINTTYPE_TABLE + " (" +
@@ -110,16 +113,53 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 		db.execSQL(CREATE_TAGS_STATEMENT);
 		db.execSQL(CREATE_POINTS_STATEMENT);
 		db.execSQL(CREATE_POINTSTOTAGS_STATEMENT);
+		addDefaultPointType(db);
 	}
 
+	//Ajout des types de points
+	public void addDefaultPointType(SQLiteDatabase db) {
+		ContentValues value = new ContentValues();
+		
+		//Vidéo
+		value.put(POINTTYPE_IMAGE, "");
+		value.put(POINTTYPE_NAME, "Vidéo");
+		value.put(POINTTYPE_SHOW, 1);
+		db.insert(POINTTYPE_TABLE, null, value);
+		
+		//Commentaire
+		value.put(POINTTYPE_IMAGE, "");
+		value.put(POINTTYPE_NAME, "Commentaire");
+		value.put(POINTTYPE_SHOW, 1);
+		db.insert(POINTTYPE_TABLE, null, value);
+		
+		//Photo
+		value.put(POINTTYPE_IMAGE, "");
+		value.put(POINTTYPE_NAME, "Photo");
+		value.put(POINTTYPE_SHOW, 1);
+		db.insert(POINTTYPE_TABLE, null, value);
+		
+		//Tracking
+		value.put(POINTTYPE_IMAGE, "");
+		value.put(POINTTYPE_NAME, "Tracking");
+		value.put(POINTTYPE_SHOW, 0);
+		db.insert(POINTTYPE_TABLE, null, value);
+	}
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL(DROP_TRAVELS_STATEMENT);
+		if (oldVersion <=  1) {
+			addDefaultPointType(db);
+		}
+		if (oldVersion <= 2) {
+			String sql = "ALTER TABLE " + POINT_TABLE + " ADD COLUMN `" + POINT_ORDER + "` INTEGER;";
+			db.execSQL(sql);
+		}
+		/*db.execSQL(DROP_TRAVELS_STATEMENT);
 		db.execSQL(DROP_POINTTYPES_STATEMENT);
 		db.execSQL(DROP_TAGS_STATEMENT);
 		db.execSQL(DROP_POINTS_STATEMENT);
 		db.execSQL(DROP_POINTSTOTAGS_STATEMENT);
-		onCreate(db);
+		onCreate(db);*/
 	}
 	
 }
