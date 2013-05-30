@@ -49,8 +49,8 @@ public class TravelDAO extends DAO {
 		}
 	}
 	
-	public ArrayList<Travel> getByDateStart(String dateStart) {
-		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_DATE_START + " = ?", new String[]{dateStart});
+	public ArrayList<Travel> getByDateStart(int dateStart) {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_DATE_START + " = ?", new String[]{String.valueOf(dateStart)});
 		if (c.getCount() == 0) {
 			return null;
 		} else {
@@ -63,8 +63,8 @@ public class TravelDAO extends DAO {
 		}
 	}
 	
-	public ArrayList<Travel> getByDateStop(String dateStop) {
-		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_DATE_STOP + " = ?", new String[]{dateStop});
+	public ArrayList<Travel> getByDateStop(int dateStop) {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + TRAVEL_TABLE + " WHERE " + TRAVEL_DATE_STOP + " = ?", new String[]{String.valueOf(dateStop)});
 		if (c.getCount() == 0) {
 			return null;
 		} else {

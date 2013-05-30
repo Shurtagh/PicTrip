@@ -4,10 +4,14 @@ import java.io.File;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.model.Marker;
@@ -26,22 +30,49 @@ class PopupAdapter implements InfoWindowAdapter {
 
   @Override
   public View getInfoContents(Marker marker) {
-    View popup=inflater.inflate(R.layout.popup, null);
-
-    TextView tv=(TextView)popup.findViewById(R.id.title);
-
-    tv=(TextView)popup.findViewById(R.id.snippet);
-    if(marker.getTitle() != null) {
-    	if(marker.getTitle().toString().startsWith("/")) {
-    		File imgFile = new  File(marker.getTitle());
-    		if(imgFile.exists()){
-    			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-    			ImageView image = (ImageView)popup.findViewById(R.id.icon);
-    			image.setImageBitmap(Bitmap.createScaledBitmap(myBitmap, 200, 320, false));
-    		}
-    	} 
-    }
+	  View popup;
+	  TextView tv;
+	  
+	  if(marker.getTitle() != null) {
+		  if(marker.getTitle().toString().contains("VID")) {
+			  popup=inflater.inflate(R.layout.popupvideo, null);
+			  tv=(TextView)popup.findViewById(R.id.snippet);
+	    		/*File imgFile = new  File(marker.getTitle());
+	    		//if(imgFile.exists()){
+	    			VideoView video = (VideoView)popup.findViewById(R.id.video);
+	    			//video.setVideoPath(marker.getTitle());
+	    			video.setVideoURI(Uri.parse(marker.getTitle()));
+	    			MediaController media = new MediaController(Menu.getContext());
+	    			media.setAnchorView(video);
+	    			media.setMediaPlayer(video);
+	    			video.setMediaController(media);
+	    			video.requestFocus();
+	    			video.start();*/
+	    			
+	    			MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+	    			retriever.setDataSource(marker.getTitle());
+	    			Bitmap bitmap=retriever.getFrameAtTime(1000);
+	    			ImageView image = (ImageView)popup.findViewById(R.id.preview);
+	    			image.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 200, 320, false));
+	    		//}
+		  } else {
+			  popup=inflater.inflate(R.layout.popup, null);
+			  tv=(TextView)popup.findViewById(R.id.snippet);
+			  File imgFile = new  File(marker.getTitle());
+	    		if(imgFile.exists()){
+	    			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+	    			System.out.println(imgFile.getAbsolutePath());
+	    			ImageView image = (ImageView)popup.findViewById(R.id.icon);
+	    			image.setImageBitmap(Bitmap.createScaledBitmap(myBitmap, 200, 320, false));
+	    		}
+		  }
+	  } else {
+		  popup=inflater.inflate(R.layout.popup, null);
+		  tv=(TextView)popup.findViewById(R.id.snippet);
+	  }
+	  
     tv.setText(marker.getSnippet());
+    
     return(popup);
   }
 }

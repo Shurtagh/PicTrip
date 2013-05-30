@@ -103,7 +103,7 @@ public class AndroidCustomGalleryActivity extends Activity {
                         	}
                         }
                     	System.out.println(tab[i][0] + " " + tab[i][1] + " " + arrPath[i] + " " + snippetToSend + " " + dates_taken[i]);
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i]));
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i], 1));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -139,7 +139,7 @@ public class AndroidCustomGalleryActivity extends Activity {
                     			}
                         	}
                         }
-                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i]));
+                    	imagesToSend.add(new ObjetImage(tab[i][0], tab[i][1], arrPath[i], snippetToSend, dates_taken[i], 1));
                     }
                 }
             	Intent intent = new Intent(getBaseContext(), MainActivity.class);

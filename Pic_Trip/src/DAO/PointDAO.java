@@ -2,11 +2,13 @@ package DAO;
 
 import java.util.ArrayList;
 
-
 import ElementObject.Point;
+import ElementObject.PointType;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
+import com.example.pic_trip.Menu;
 
 public class PointDAO extends DAO {
 	
@@ -67,8 +69,8 @@ public class PointDAO extends DAO {
 		}
 	}
 	
-	public ArrayList<Point> getByDateAdd(String date_add) {
-		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_DATE_ADD + " = ?", new String[]{date_add});
+	public ArrayList<Point> getByDateAdd(int date_add) {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_DATE_ADD + " = ?", new String[]{String.valueOf(date_add)});
 		if (c.getCount() == 0) {
 			return null;
 		} else {
@@ -83,6 +85,20 @@ public class PointDAO extends DAO {
 	
 	public ArrayList<Point> getAll() {
 		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE, null);
+		if (c.getCount() == 0) {
+			return null;
+		} else {
+			ArrayList<Point> list = new ArrayList<Point>();
+			while (c.moveToNext()) {
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
+			}
+			c.close();
+			return list;
+		}
+	}
+	
+	public ArrayList<Point> getPointByLatitudeAndLongitude(int latitude, int longitude) {
+		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_LATITUDE + " = ? AND " + POINT_LONGITUDE + " = ?", new String[]{String.valueOf(latitude), String.valueOf(longitude)});
 		if (c.getCount() == 0) {
 			return null;
 		} else {
@@ -135,5 +151,11 @@ public class PointDAO extends DAO {
 	
 	public void deleteAllPointOfTravel(int travel_id) {
 		mDb.delete(POINT_TABLE, POINT_TRAVEL_ID + " = ?", new String[] {String.valueOf(travel_id)});
+	}
+	
+	public void deleteAllPointOfTravelExceptTracking(int travel_id) {
+		PointTypeDAO PTDAO = new PointTypeDAO(Menu.getContext());
+		PointType pt = PTDAO.getByName("Tracking");
+		mDb.delete(POINT_TABLE, POINT_TYPE_ID + " <> ?", new String[] {String.valueOf(pt.getId())});
 	}
 }

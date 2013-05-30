@@ -120,9 +120,9 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 	public void addDefaultPointType(SQLiteDatabase db) {
 		ContentValues value = new ContentValues();
 		
-		//Vidéo
+		//Photo
 		value.put(POINTTYPE_IMAGE, "");
-		value.put(POINTTYPE_NAME, "Vidéo");
+		value.put(POINTTYPE_NAME, "Photo");
 		value.put(POINTTYPE_SHOW, 1);
 		db.insert(POINTTYPE_TABLE, null, value);
 		
@@ -132,17 +132,18 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 		value.put(POINTTYPE_SHOW, 1);
 		db.insert(POINTTYPE_TABLE, null, value);
 		
-		//Photo
-		value.put(POINTTYPE_IMAGE, "");
-		value.put(POINTTYPE_NAME, "Photo");
-		value.put(POINTTYPE_SHOW, 1);
-		db.insert(POINTTYPE_TABLE, null, value);
-		
 		//Tracking
 		value.put(POINTTYPE_IMAGE, "");
 		value.put(POINTTYPE_NAME, "Tracking");
 		value.put(POINTTYPE_SHOW, 0);
 		db.insert(POINTTYPE_TABLE, null, value);
+		
+		//Vidéo
+		value.put(POINTTYPE_IMAGE, "");
+		value.put(POINTTYPE_NAME, "Vidéo");
+		value.put(POINTTYPE_SHOW, 1);
+		db.insert(POINTTYPE_TABLE, null, value);
+		
 	}
 	
 	@Override
@@ -154,12 +155,30 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 			String sql = "ALTER TABLE " + POINT_TABLE + " ADD COLUMN `" + POINT_ORDER + "` INTEGER;";
 			db.execSQL(sql);
 		}
-		/*db.execSQL(DROP_TRAVELS_STATEMENT);
-		db.execSQL(DROP_POINTTYPES_STATEMENT);
-		db.execSQL(DROP_TAGS_STATEMENT);
-		db.execSQL(DROP_POINTS_STATEMENT);
-		db.execSQL(DROP_POINTSTOTAGS_STATEMENT);
-		onCreate(db);*/
+		if (oldVersion <= 3) {
+			ContentValues value = new ContentValues();
+			value.put(POINTTYPE_NAME, "Photo");
+			value.put(POINTTYPE_IMAGE, "");
+			value.put(POINTTYPE_SHOW, 1);
+			db.update(POINTTYPE_TABLE, value, POINTTYPE_ID + " = ?", new String[] {String.valueOf(1)});
+			
+			value = new ContentValues();
+			value.put(POINTTYPE_NAME, "Commentaire");
+			value.put(POINTTYPE_IMAGE, "");
+			value.put(POINTTYPE_SHOW, 1);
+			db.update(POINTTYPE_TABLE, value, POINTTYPE_ID + " = ?", new String[] {String.valueOf(2)});
+			
+			value = new ContentValues();
+			value.put(POINTTYPE_NAME, "Tracking");
+			value.put(POINTTYPE_IMAGE, "");
+			value.put(POINTTYPE_SHOW, 0);
+			db.update(POINTTYPE_TABLE, value, POINTTYPE_ID + " = ?", new String[] {String.valueOf(3)});
+			
+			value = new ContentValues();
+			value.put(POINTTYPE_NAME, "Vidéo");
+			value.put(POINTTYPE_IMAGE, "");
+			value.put(POINTTYPE_SHOW, 1);
+			db.update(POINTTYPE_TABLE, value, POINTTYPE_ID + " = ?", new String[] {String.valueOf(4)});
+		}
 	}
-	
 }

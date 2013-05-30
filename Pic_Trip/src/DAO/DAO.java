@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 public abstract class DAO {
 	
 	//Database description
-	protected final static int version = 3;
+	protected final static int version = 4;
 	protected final static String dbName = "dateBase.db";
 	
 	//Database handler

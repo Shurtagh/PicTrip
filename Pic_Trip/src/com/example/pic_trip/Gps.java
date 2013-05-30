@@ -33,16 +33,16 @@ public class Gps extends Activity {
 	    locationListener = new GPSLocationListener(); 
 	    
     	lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 10, locationListener);
+    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 1, locationListener);
     }
     
     private class GPSLocationListener implements LocationListener 
     {
       @Override
       public void onLocationChanged(Location location) {
-    	  if(!enable) {
-    		  lm.removeUpdates(locationListener);
-    	  }
+    	  //if(!enable) {
+    		//  lm.removeUpdates(locationListener);
+    	  //}
     	
         float lat = Float.valueOf((float)location.getLatitude());
         float lon = Float.valueOf((float)location.getLongitude());

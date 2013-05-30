@@ -334,19 +334,19 @@ containing a value of this type.
         public static final int GallerySearchButton=0x7f050010;
         public static final int GalleryStartDateEditText=0x7f05000e;
         public static final int GalleryTripSpinner=0x7f05000c;
-        public static final int Layout_dates=0x7f050029;
+        public static final int Layout_dates=0x7f05002a;
         public static final int OptionsButton=0x7f05001c;
         public static final int OptionsCheckBox=0x7f05001a;
         public static final int OptionsTitle=0x7f05001b;
         public static final int PhoneImageGrid=0x7f05001e;
         public static final int TextView1=0x7f05000b;
         public static final int TextViewFormDesc=0x7f050014;
-        public static final int TripDateDebut=0x7f05002a;
-        public static final int TripDateFin=0x7f05002b;
-        public static final int TripDesc=0x7f05002c;
+        public static final int TripDateDebut=0x7f05002b;
+        public static final int TripDateFin=0x7f05002c;
+        public static final int TripDesc=0x7f05002d;
         public static final int TripListView=0x7f05001d;
-        public static final int TripTitle=0x7f050028;
-        public static final int action_settings=0x7f05002d;
+        public static final int TripTitle=0x7f050029;
+        public static final int action_settings=0x7f05002e;
         public static final int addPictures=0x7f050008;
         public static final int days=0x7f050012;
         public static final int demo_collection_button=0x7f050013;
@@ -362,6 +362,7 @@ containing a value of this type.
         public static final int normal=0x7f050001;
         public static final int pager=0x7f050005;
         public static final int pager_title_strip=0x7f050006;
+        public static final int preview=0x7f050028;
         public static final int satellite=0x7f050002;
         public static final int selectBtn=0x7f05001f;
         public static final int snippet=0x7f050026;
@@ -387,8 +388,9 @@ containing a value of this type.
         public static final int menu=0x7f03000e;
         public static final int popup=0x7f03000f;
         public static final int popupcommentaire=0x7f030010;
-        public static final int trip_list_element=0x7f030011;
-        public static final int viewpager=0x7f030012;
+        public static final int popupvideo=0x7f030011;
+        public static final int trip_list_element=0x7f030012;
+        public static final int viewpager=0x7f030013;
     }
     public static final class menu {
         public static final int main=0x7f090000;

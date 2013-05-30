@@ -36,17 +36,13 @@ public class PointTypeDAO extends DAO {
 		}
 	}
 	
-	public ArrayList<PointType> getByName(String name) {
+	public PointType getByName(String name) {
 		Cursor c = mDb.rawQuery("SELECT * FROM " + POINTTYPE_TABLE + " WHERE " + POINTTYPE_NAME + " = ?", new String[]{String.valueOf(name)});
-		if (c.getCount() == 0) {
+		c.moveToFirst();
+		if (c.getCount() > 1 || c.getCount() == 0) {
 			return null;
 		} else {
-			ArrayList<PointType> list = new ArrayList<PointType>();
-			while (c.moveToNext()) {
-				list.add(new PointType(c.getInt(0), c.getString(1), c.getString(2), c.getInt(3)));
-			}
-			c.close();
-			return list;
+			return new PointType(c.getInt(0), c.getString(1), c.getString(2), c.getInt(3));
 		}
 	}
 	
