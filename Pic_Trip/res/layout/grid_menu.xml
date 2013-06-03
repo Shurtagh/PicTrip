@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orientation="vertical" 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    android:baselineAligned="false">
+
+	<LinearLayout android:orientation="horizontal"  
+	    android:layout_weight="1" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent" >
+	    
+	    <Button android:id="@+id/btnEditer" 
+	        android:text="Editer" 
+	        android:drawableTop="@android:drawable/btn_star_big_on" 
+	        android:scaleType="fitCenter"
+	        style="@style/MenuButton"
+	        android:background="@color/Gray"/>
+	    <Button android:id="@+id/btnJournal" 
+	        android:text="Diaporama" 
+	        android:drawableTop="@drawable/logodiaporama" 
+	        style="@style/MenuButton"
+	        android:background="@color/Gray"/>
+	</LinearLayout>
+	
+	<LinearLayout android:orientation="horizontal" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent"  
+	    android:layout_weight="1" >
+	    
+	    <Button android:id="@+id/btnTrace" 
+	        android:text="Tracé Intéractif" 
+	        android:drawableTop="@android:drawable/btn_star_big_on" 
+	        style="@style/MenuButton"
+	        android:background="@color/Gray"/>
+	    <Button android:id="@+id/btnExplore" 
+	        android:text="Exploration" 
+	        android:drawableTop="@android:drawable/btn_star_big_on" 
+	        style="@style/MenuButton"
+	        android:background="@color/Gray"/>    
+	</LinearLayout>
+
+
+</LinearLayout>

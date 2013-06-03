@@ -1,6 +1,10 @@
 package DAO;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import ElementObject.Point;
 import ElementObject.PointType;
@@ -111,6 +115,64 @@ public class PointDAO extends DAO {
 		}
 	}
 
+	public ArrayList<String> getDistinctDayOfTravel(int travel_id) {
+		Cursor c = mDb.rawQuery("SELECT " + POINT_DATE_ADD + " FROM " + POINT_TABLE + " WHERE " + POINT_TRAVEL_ID + " = ? ORDER BY " + POINT_DATE_ADD, new String[]{String.valueOf(travel_id)});
+		if (c.getCount() == 0) {
+			return null;
+		} else {
+			ArrayList<String> list = new ArrayList<String>();
+			while (c.moveToNext()) {
+				long timestamp = c.getLong(0);
+				SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+				String value = sdf.format(new Date(timestamp));
+				if (!list.contains(value)) {
+					list.add(value);
+				}
+			}
+			c.close();
+			return list;
+		}
+	}
+	
+	public ArrayList<Point> getAllPhotosOfDay(String date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+		try {
+			Date dateObject = (Date)sdf.parse(date);
+			long timestamp_debut = dateObject.getTime();
+			long timestamp_end = timestamp_debut + 86400000;
+			Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_DATE_ADD + " > ? AND " + POINT_DATE_ADD + " < ? ORDER BY " + POINT_DATE_ADD, new String[]{String.valueOf(timestamp_debut), String.valueOf(timestamp_end)});
+			if (c.getCount() == 0) {
+				return null;
+			} else {
+				ArrayList<Point> list = new ArrayList<Point>();
+				while (c.moveToNext()) {
+					list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
+				}
+				c.close();
+				return list;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<Point> getAllVideosOfTravel(int travel_id) {
+		PointTypeDAO PTDAO = new PointTypeDAO(Menu.getContext());
+		PointType pt = PTDAO.getByName("Vidéo");
+		Cursor c = mDb.rawQuery("SELECT * FROM " + POINT_TABLE + " WHERE " + POINT_TYPE_ID + " = ? AND " + POINT_TRAVEL_ID + " = ? ORDER BY " + POINT_DATE_ADD, new String[]{String.valueOf(pt.getId()), String.valueOf(travel_id)});
+		if (c.getCount() == 0) {
+			return null;
+		} else {
+			ArrayList<Point> list = new ArrayList<Point>();
+			while (c.moveToNext()) {
+				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
+			}
+			c.close();
+			return list;
+		}
+	}
+	
 	public void deleteAll() {
 		mDb.delete(POINT_TABLE, null, null);
 	}

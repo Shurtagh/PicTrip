@@ -33,7 +33,7 @@ public class Gps extends Activity {
 	    locationListener = new GPSLocationListener(); 
 	    
     	lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 1, locationListener);
+    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 15, locationListener);
     }
     
     private class GPSLocationListener implements LocationListener 
@@ -48,9 +48,6 @@ public class Gps extends Activity {
         float lon = Float.valueOf((float)location.getLongitude());
         Point p = new Point(travelDAO.getCurrentTravel().getId(),3,location.getTime(),lat,lon,null,null,0);
 		p.save();
-		for(Point g : pointDAO.getAll()) {
-			System.out.println(g.getId() + " "+g.getDate_add() + " "+g.getLatitude() + " "+g.getLongitude() + " "+g.getTravel_id() + " " +g.getType_id());
-		}
       }
 
 	@Override

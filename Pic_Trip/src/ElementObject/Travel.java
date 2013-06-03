@@ -73,6 +73,7 @@ public class Travel {
 		this.description = description;
 	}
 	
+	
 	public Travel () {
 		
 	}

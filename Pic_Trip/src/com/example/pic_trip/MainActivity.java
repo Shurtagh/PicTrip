@@ -1,7 +1,10 @@
 package com.example.pic_trip;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 import DAO.PointDAO;
 import ElementObject.Point;
@@ -54,6 +57,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	private PointDAO pointDAO;
 	private Builder adb;
 	private LatLng globalPoint;
+	private int typeAffichage = -1;
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -66,21 +70,42 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    
 	    Intent int_ = getIntent();
 	    tripId = int_.getIntExtra("id", -1);
+	    typeAffichage = int_.getIntExtra("type", -1);
 	    
 	    setContentView(R.layout.activity_main);
+	    
 	    Button add_photos = ((Button) findViewById(R.id.addPictures));
-	    Button diaporama = ((Button) findViewById(R.id.diaporama));
 	    Button enregistrer = ((Button) findViewById(R.id.enregistrer));
+	    
+	    if(typeAffichage == 2 || typeAffichage == 3) {
+	    	add_photos.setVisibility(View.GONE);
+	    	enregistrer.setVisibility(View.GONE);
+	    }
 	    
 	    map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 	    
-	    map.setOnMapLongClickListener(MainActivity.this); 
+	    if(typeAffichage == 1) {
+	    	map.setOnMapLongClickListener(MainActivity.this); 
+	    }
 	    
 	    map.setOnInfoWindowClickListener(
 		  new OnInfoWindowClickListener(){
 		    public void onInfoWindowClick(Marker marker){
 		    	markerClicked = marker;
-		    	createDialog().show();
+		    	if(typeAffichage == 1) {
+		    		createDialog().show();
+		    	} else {
+		    		if(markerClicked.getTitle() != null) {
+		    			Intent intent = new Intent();
+		    			intent.setAction(Intent.ACTION_VIEW);
+		    			if(markerClicked.getTitle().toString().contains("VID")) {
+		    				intent.setDataAndType(Uri.parse("file://" + markerClicked.getTitle()), "video/*");
+		    			} else {
+		    				intent.setDataAndType(Uri.parse("file://" + markerClicked.getTitle()), "image/*");
+		    			}
+		    			startActivity(intent);
+		    		}
+		    	}
 		    }
 		  }
 		);
@@ -94,14 +119,25 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    
 	    if(tripId != -1) {
 	    	ArrayList<Point> points = pointDAO.getByTravelId(tripId);
-	    	System.out.println("YYYYYYYY" + points.size());
 	    	if(points != null) {
 	    		for(Point p : points) {
 	    			if(p.getType_id() == 1 || p.getType_id() == 3) {
+	    				if(p.getType_id() == 1) {
+	    					SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+	    					System.out.println(sdf.format(new Date(p.getDate_add())));
+	    					System.out.println(p.getDate_add());
+	    				}
 	    				result.add(new ObjetImage(p.getLatitude(), p.getLongitude(), p.getUri(), p.getComment(), p.getDate_add(), p.getType_id()));
 	    			} 
 	    			else if(p.getType_id() == 2) {
-	    				Marker m = map.addMarker(new MarkerOptions().position(new LatLng(p.getLatitude(),p.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+	    				Marker m = map.addMarker(new MarkerOptions().position(new LatLng(p.getLatitude(),p.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+	    				if(p.getComment() != null) {
+	    					m.setSnippet(p.getComment());
+	    				}
+	    				comMarker.add(m);
+	    			}
+	    			else if(p.getType_id() == 4) {
+	    				Marker m = map.addMarker(new MarkerOptions().position(new LatLng(p.getLatitude(),p.getLongitude())).title(p.getUri()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 	    				if(p.getComment() != null) {
 	    					m.setSnippet(p.getComment());
 	    				}
@@ -110,7 +146,12 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    		}
 	    	}
 	    	if(result.size() > 0) {
-	    		traceNormal();
+	    		if(typeAffichage == 1 || typeAffichage == 3) {
+	    			traceNormal();
+	    		} 
+	    		else if(typeAffichage == 2) {
+	    			traceInteractif();
+	    		}
 	    	}
 	    }
 	    
@@ -135,19 +176,17 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	        		p.save();
 	        	}
 	        	for(Marker m : comMarker) {
-	        		Point p = new Point(tripId,2,123,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
+	        		Point p = null;
+	        		if(m.getTitle() != null) {
+	        			System.out.println("VIDEO");
+	        			p = new Point(tripId,4,123,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
+	        		} else {
+	        			p = new Point(tripId,2,123,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
+	        		}
 	        		p.save();
 	        	}
 	    		adb.show();
 	        }
-	    });
-	    
-	    diaporama.setOnClickListener(new Button.OnClickListener() {  
-	        public void onClick(View v) {
-	        	//Intent diapo = new Intent(MainActivity.this, SwipeActivity.class);
-	            //startActivityForResult(diapo, 100); 
-	        	//stopActivity(diapo);
-	         }
 	    });
 	    
 		add_photos.setOnClickListener(new Button.OnClickListener() {  
@@ -235,7 +274,6 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            public void onClick(DialogInterface dialog, int which) {
 	            	Marker m = map.addMarker(new MarkerOptions().position(globalPoint).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).snippet("Vidéo"));
 		 	           markerClicked = m;
-		 	          comMarker.add(m);
 	            	Intent mediaChooser = new Intent(Intent.ACTION_PICK,
 	            			android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
 	            	mediaChooser.setType("video/*");
@@ -269,9 +307,9 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            	polylineOnMaps = new ArrayList<Polyline>();
 	            	
 	            	for(int ind=0;ind<imagesOnTheMap.size();ind++) {
-	            		if(imagesOnTheMap.get(i).getImagePath() != null) {
-	            			if(imagesOnTheMap.get(i).getImagePath().equals(markerClicked.getTitle())) {
-	            				imagesOnTheMap.remove(i);
+	            		if(imagesOnTheMap.get(ind).getImagePath() != null) {
+	            			if(imagesOnTheMap.get(ind).getImagePath().equals(markerClicked.getTitle())) {
+	            				imagesOnTheMap.remove(ind);
 	            			}
 	            		}
 	            	}
@@ -393,13 +431,29 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 				  lastPoint = currentPoint;
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
-					  Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
-					  imagesOnTheMap.add(new ObjetImage(result.get(i).getLatitude(), result.get(i).getLongitude(), result.get(i).getImagePath(), result.get(i).getSnippet(), result.get(i).getDate(), result.get(i).getType()));
-					  markerOnMaps.add(m);
-					  m.showInfoWindow();
-					  i++;
+					  Marker m = null;
+					  if(result.get(i).getType() == 1) {
+						  m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
+					  } else if(result.get(i).getType() == 3) {
+						  m = map.addMarker(new MarkerOptions().position(currentPoint));
+			    	  }
+					  if(result.get(i).getType() == 1) {
+						  imagesOnTheMap.add(new ObjetImage(result.get(i).getLatitude(), result.get(i).getLongitude(), result.get(i).getImagePath(), result.get(i).getSnippet(), result.get(i).getDate(), result.get(i).getType()));
+						  markerOnMaps.add(m);
+						  m.showInfoWindow();
+					  } else if(result.get(i).getType() == 3) {
+			    			m.setVisible(false);
+			    	  }
+					  System.out.println("POINT");
 					  map.getUiSettings().setScrollGesturesEnabled(false);
-					  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
+					  if(result.get(i).getType() == 1) {
+						  System.out.println("PHOTO");
+						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 10.0f),4000,MyCancelableCallback);
+					  } else if(result.get(i).getType() == 3) {
+						  System.out.println("TRACKING");
+						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 10.0f),1,MyCancelableCallback);
+					  }
+					  i++;
 				  } else {
 					  i=1;
 					  lastPoint = null;
@@ -411,8 +465,12 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
 	    	Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(0).getImagePath()));
 	    	markerOnMaps.add(m);
-			m.showInfoWindow();
-	    	map.getUiSettings().setScrollGesturesEnabled(false);
+	    	if(result.get(0).getType() == 3) {
+	    		m.setVisible(false);
+	    	}
+	    	i = 1; 
+	    	lastPoint = null;
+	    	//map.getUiSettings().setScrollGesturesEnabled(false);
 	    	map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 9.0f),4000,MyCancelableCallback);
 	    	//map.setOnInfoWindowClickListener(this);
 	  }
@@ -429,6 +487,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	            String picturePath = cursor.getString(columnIndex);
 	            cursor.close();
 		    	markerClicked.setTitle(picturePath);
+		    	comMarker.add(markerClicked);
 		    } else {
 		    	Bundle bundle = imageReturnedIntent.getExtras();
 		    	if(bundle!=null) {
@@ -458,7 +517,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    		ArrayList<Marker> tmpMarker = new ArrayList<Marker>();
 		    		
 		    		for(Marker m : comMarker) {
-		    			if(markerClicked.getTitle() != null) {
+		    			if(m.getTitle() != null) {
 	    					Marker tmp = map.addMarker(new MarkerOptions()
 			    			.position(new LatLng(m.getPosition().latitude, m.getPosition().longitude))
 			    			.title(m.getTitle())

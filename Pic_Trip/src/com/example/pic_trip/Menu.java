@@ -54,7 +54,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        intent = new Intent(Menu.this, MainActivity.class);
+        intent = new Intent(Menu.this, GridMenuActivity.class);
         Menu.context = getApplicationContext();
         travelDAO = new TravelDAO(Menu.getContext());
         
