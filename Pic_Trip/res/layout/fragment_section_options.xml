@@ -33,4 +33,26 @@
 		android:onClick="saveOptions"
         android:text="@string/options_button" />
 
+    <EditText
+        android:id="@+id/tpsTracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignLeft="@+id/OptionsButton"
+        android:layout_marginLeft="14dp"
+        android:ems="4"
+        android:inputType="number"
+        android:text="20" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/OptionsCheckBox"
+        android:layout_marginRight="29dp"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/tpsTracking"
+        android:text="Délais tracking (sec.)" />
+
 </RelativeLayout>

@@ -21,12 +21,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -40,9 +40,13 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     ViewPager mViewPager;
     static Intent intent;
     
+    static Intent toReload;
+    
     static Context context = null;
     
     private static TravelDAO travelDAO = null;
+    
+    private static int IDGlobal;
 
     public static Context getContext() {
 		  if (Menu.context != null) {
@@ -55,6 +59,9 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         super.onCreate(savedInstanceState);
         
         intent = new Intent(Menu.this, GridMenuActivity.class);
+        
+        toReload = getIntent();
+        
         Menu.context = getApplicationContext();
         travelDAO = new TravelDAO(Menu.getContext());
         
@@ -163,7 +170,11 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     		adb.setMessage("Vous venez de créer : " + title);
     		adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int which) {
+	            	ArrayList<Travel> list =  travelDAO.getAll();
+					int id = list.get(list.size() - 1).getId();
 	            	Intent intent = new Intent(Menu.this, MainActivity.class);
+	            	intent.putExtra("id", id);
+	            	intent.putExtra("type", 1);
 	            	startActivity(intent);
 	            }
     		});
@@ -197,14 +208,19 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public void saveOptions(View button) {
     	final CheckBox gps = (CheckBox) findViewById(R.id.OptionsCheckBox);
     	
+    	EditText tps = (EditText) findViewById(R.id.tpsTracking);
+    	
+    	int tpsToSend = Integer.parseInt(tps.getText().toString());
+    	
     	boolean gpsActivate = gps.isChecked();
     	
     	Intent gps_ = new Intent(Menu.this, Gps.class);
-
+    	
     	String tmp = "activé";
 
     	if (gpsActivate) {
     		gps_.putExtra("enable", true);
+    		gps_.putExtra("temps", tpsToSend);
         	startActivity(gps_);
     	} else {
     		gps_.putExtra("enable", false);
@@ -325,6 +341,21 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
             //On attribut à notre listView l'adapter que l'on vient de créer
             tripList.setAdapter(mSchedule);
             
+            tripList.setLongClickable(true);
+            
+            tripList.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                        final int arg2, long arg3) {
+                	
+                	IDGlobal = arg2;
+                	
+                	createDialogForSupprTrip().show();
+                	
+                	return true;
+		        }
+		    });
+		            
             tripList.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -340,6 +371,36 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
             
             return rootView;
         }
+        
+        private AlertDialog.Builder createDialogForSupprTrip() {
+    		//On instancie notre layout en tant que View
+    	        LayoutInflater factory = LayoutInflater.from(getActivity());
+    	        final View alertDialogView = factory.inflate(R.layout.suppr_trip, null);
+    	 
+    	        //Création de l'AlertDialog
+    	        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+    	 
+    	        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+    	        adb.setView(alertDialogView);
+    	 
+    	        //On donne un titre à l'AlertDialog
+    	        adb.setTitle("Information");
+    	 
+    	        //On modifie l'icône de l'AlertDialog pour le fun ;)
+    	        adb.setIcon(android.R.drawable.ic_dialog_alert);
+
+    	        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
+    	        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+    	            public void onClick(DialogInterface dialog, int which) {
+                    	ArrayList<Travel> list =  travelDAO.getAll();
+                    	int id = list.get(IDGlobal).getId();
+                    	travelDAO.deleteTravel(id);
+                    	
+                        getActivity().finish();
+                        startActivity(toReload);
+    	          } });
+    	        return adb;
+    	    }
     }
     
     public static class GallerySectionFragment extends Fragment {
@@ -351,7 +412,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
             return rootView;
         }
     }
-
+    
     public static class OptionsSectionFragment extends Fragment {
 
         @Override

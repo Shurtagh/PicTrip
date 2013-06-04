@@ -30,10 +30,12 @@ public class Gps extends Activity {
         Intent int_ = getIntent();
 	    enable = int_.getBooleanExtra("enable", true);
 	    
+	    int temps = int_.getIntExtra("temps",20);
+	    
 	    locationListener = new GPSLocationListener(); 
 	    
     	lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 15, locationListener);
+    	lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, temps*1000, 15, locationListener);
     }
     
     private class GPSLocationListener implements LocationListener 
@@ -43,7 +45,7 @@ public class Gps extends Activity {
     	  //if(!enable) {
     		//  lm.removeUpdates(locationListener);
     	  //}
-    	
+    	  
         float lat = Float.valueOf((float)location.getLatitude());
         float lon = Float.valueOf((float)location.getLongitude());
         Point p = new Point(travelDAO.getCurrentTravel().getId(),3,location.getTime(),lat,lon,null,null,0);

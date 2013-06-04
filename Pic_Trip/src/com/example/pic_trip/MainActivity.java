@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import DAO.PointDAO;
@@ -58,6 +59,10 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	private Builder adb;
 	private LatLng globalPoint;
 	private int typeAffichage = -1;
+	private int[] colorsPolylines = {Color.RED,Color.BLUE,Color.GREEN,Color.DKGRAY,Color.MAGENTA};
+	private HashMap<String,Integer> couleursSurLaCarte = new HashMap<String,Integer>();  
+	private int indiceCouleur = -1;
+	private String dateReference = "null";
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
@@ -124,8 +129,6 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    			if(p.getType_id() == 1 || p.getType_id() == 3) {
 	    				if(p.getType_id() == 1) {
 	    					SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
-	    					System.out.println(sdf.format(new Date(p.getDate_add())));
-	    					System.out.println(p.getDate_add());
 	    				}
 	    				result.add(new ObjetImage(p.getLatitude(), p.getLongitude(), p.getUri(), p.getComment(), p.getDate_add(), p.getType_id()));
 	    			} 
@@ -147,7 +150,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    	}
 	    	if(result.size() > 0) {
 	    		if(typeAffichage == 1 || typeAffichage == 3) {
-	    			traceNormal();
+					traceNormal();
 	    		} 
 	    		else if(typeAffichage == 2) {
 	    			traceInteractif();
@@ -165,20 +168,21 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	        	pointDAO.deleteAllPointOfTravelExceptTracking(tripId);
 	        	long date = 0;
 	        	for(Marker m : markerOnMaps) {
-	        		for(ObjetImage image : result) {
-	        			if(image.getImagePath() != null) {
-	        				if(image.getImagePath().equals(m.getTitle())) {
-	        					date = image.getDate();
+	        		if(m.getTitle() != null) {
+	        			for(ObjetImage image : result) {
+	        				if(image.getImagePath() != null) {
+	        					if(image.getImagePath().equals(m.getTitle())) {
+	        						date = image.getDate();
+	        					}
 	        				}
 	        			}
+	        			Point p = new Point(tripId,1,date,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
+	        			p.save();
 	        		}
-	        		Point p = new Point(tripId,1,date,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
-	        		p.save();
 	        	}
 	        	for(Marker m : comMarker) {
 	        		Point p = null;
 	        		if(m.getTitle() != null) {
-	        			System.out.println("VIDEO");
 	        			p = new Point(tripId,4,123,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
 	        		} else {
 	        			p = new Point(tripId,2,123,(float)m.getPosition().latitude,(float)m.getPosition().longitude,m.getSnippet(),m.getTitle(),0);
@@ -353,20 +357,47 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	  
 	  private void updatePolyline() {
 		  int p=0;
+		  SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+		  int indiceCouleur = -1;
+	    	String dateReference = "null";
+	    	ArrayList<ObjetImage> tmp = new ArrayList<ObjetImage>();
+	    	int indice;
+	    	for(ObjetImage object : result) {
+	    		tmp.add(object);
+	    	}
+	    	for(indice = 0; indice<tmp.size(); indice++) {
+	    		boolean aTrouve = false;
+	    		for(Marker img : markerOnMaps) {
+	    			if(img.getTitle() != null) {
+	    				if(img.getTitle().equals(tmp.get(indice).getImagePath())) {
+	    					aTrouve = true;
+	    				}
+	    			}
+	    		}
+	    		if(!aTrouve) {
+	    			tmp.remove(indice);
+	    		}
+	    	}
 		  do {
-			  if(p<markerOnMaps.size()-1) {
-				  LatLng firstPoint = new LatLng(markerOnMaps.get(p).getPosition().latitude, markerOnMaps.get(p).getPosition().longitude);
+			  if(p<tmp.size()-1) {
+				  LatLng firstPoint = new LatLng(tmp.get(p).getLatitude(), tmp.get(p).getLongitude());
 				  p++;
-				  LatLng secondPoint = new LatLng(markerOnMaps.get(p).getPosition().latitude, markerOnMaps.get(p).getPosition().longitude);
+				  LatLng secondPoint = new LatLng(tmp.get(p).getLatitude(), tmp.get(p).getLongitude());
+				  String value = sdf.format(new Date(tmp.get(p).getDate()));
+	    			if(!dateReference.equals(value)) {
+	    				indiceCouleur++;
+	    				couleursSurLaCarte.put(value,colorsPolylines[indiceCouleur]);
+	    				dateReference = value;
+	    			}
 				  Polyline line = map.addPolyline(new PolylineOptions()
 	 		     .add(firstPoint,secondPoint)
 	 		     .width(4)
-	 		     .color(Color.RED));
+	 		     .color(colorsPolylines[indiceCouleur]));
 	 			polylineOnMaps.add(line);
 			  } else {
 				  p++;
 			  }
-		  } while(p<markerOnMaps.size());
+		  } while(p<tmp.size());
 	  }
 	  
 	  private void traceNormal() {
@@ -374,6 +405,8 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		  LatLng lastPoint = null;
 	    	boolean first = true;
 	    	LatLng firstPoint = null;
+	    	indiceCouleur = -1;
+	    	dateReference = "null";
 	    	for(int i=0;i<result.size();i++) {
 	    		LatLng currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
 	    		if(first) {
@@ -383,10 +416,18 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    		Marker m = null;
 	    		if(result.get(i).getType() == 1) {
 	    			m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()).snippet(result.get(i).getSnippet()));
+	    			SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+	    			String value = sdf.format(new Date(result.get(i).getDate()));
+	    			if(!dateReference.equals(value)) {
+	    				indiceCouleur++;
+	    				couleursSurLaCarte.put(value,colorsPolylines[indiceCouleur]);
+	    				dateReference = value;
+	    			}
 	    		}
 	    		else if(result.get(i).getType() == 3) {
 	    			m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()).snippet(result.get(i).getSnippet()));
 	    			m.setVisible(false);
+	    			markerOnMaps.add(m);
 	    		}
 
 	    		if(result.get(i).getType() == 1) {
@@ -395,10 +436,13 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 	    		}
 	    		
 	    		if(lastPoint != null) {
+	    			if(indiceCouleur < 0) {
+	    				indiceCouleur = 0;
+	    			}
 	    			Polyline line = map.addPolyline(new PolylineOptions()
 	    		     .add(lastPoint, currentPoint)
 	    		     .width(4)
-	    		     .color(Color.RED));
+	    		     .color(colorsPolylines[indiceCouleur]));
 	    			polylineOnMaps.add(line);
 	    		}
 	    		lastPoint = currentPoint;
@@ -425,12 +469,19 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 					  Polyline line = map.addPolyline(new PolylineOptions()
 		    		     .add(lastPoint, currentPoint)
 		    		     .width(4)
-		    		     .color(Color.RED));
+		    		     .color(colorsPolylines[indiceCouleur]));
 		    			polylineOnMaps.add(line);
 				  }
 				  lastPoint = currentPoint;
 				  if(i<result.size()) {
 					  currentPoint = new LatLng(result.get(i).getLatitude(), result.get(i).getLongitude());
+					  SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd LLL yyyy", Locale.FRANCE);
+		    			String value = sdf.format(new Date(result.get(i).getDate()));
+		    			if(!dateReference.equals(value)) {
+		    				indiceCouleur++;
+		    				couleursSurLaCarte.put(value,colorsPolylines[indiceCouleur]);
+		    				dateReference = value;
+		    			}
 					  Marker m = null;
 					  if(result.get(i).getType() == 1) {
 						  m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(i).getImagePath()));
@@ -444,14 +495,11 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 					  } else if(result.get(i).getType() == 3) {
 			    			m.setVisible(false);
 			    	  }
-					  System.out.println("POINT");
 					  map.getUiSettings().setScrollGesturesEnabled(false);
 					  if(result.get(i).getType() == 1) {
-						  System.out.println("PHOTO");
-						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 10.0f),4000,MyCancelableCallback);
+						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 17.0f),4000,MyCancelableCallback);
 					  } else if(result.get(i).getType() == 3) {
-						  System.out.println("TRACKING");
-						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 10.0f),1,MyCancelableCallback);
+						  map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPoint, 17.0f),1,MyCancelableCallback);
 					  }
 					  i++;
 				  } else {
@@ -462,6 +510,8 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 			  
 		  };
 		  	
+	    	indiceCouleur = -1;
+	    	dateReference = "null";
 		  	currentPoint = new LatLng(result.get(0).getLatitude(), result.get(0).getLongitude());
 	    	Marker m = map.addMarker(new MarkerOptions().position(currentPoint).title(result.get(0).getImagePath()));
 	    	markerOnMaps.add(m);
@@ -494,6 +544,12 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    		map.clear();
 		    		map.setInfoWindowAdapter(new PopupAdapter(getLayoutInflater()));
 		    		result = (ArrayList<ObjetImage>)imageReturnedIntent.getSerializableExtra("result");
+		    		for (ObjetImage image : result) {
+		    			if(image.getSnippet() == null) {
+		    				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.FRANCE);
+		    				image.setSnippet(sdf.format(new Date(image.getDate())));
+		    			}
+		    		}
 		    		if(tripId != -1) {
 		    			ArrayList<Point> points = pointDAO.getByTravelId(tripId);
 		    			if(points != null) {
@@ -505,10 +561,6 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    			}
 		    		}
 		    		Collections.sort(result);
-		    		
-		    		for(ObjetImage objet : result) {
-		    			System.out.println(objet.getDate() + " " + objet.getType());
-		    		}
 		    		
 		    		polylineOnMaps = new ArrayList<Polyline>();
 		    		markerOnMaps = new ArrayList<Marker>();
@@ -543,7 +595,7 @@ public class MainActivity extends Activity implements OnMapLongClickListener {
 		    			if(imageReturnedIntent.getExtras().getBoolean("interactif")) {
 		    				traceInteractif();
 		    			} else {
-		    				traceNormal();
+							traceNormal();
 		    			}
 		    		}
 		    	}

@@ -16,12 +16,17 @@
 
 package com.example.pic_trip;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import DAO.PointDAO;
 import ElementObject.Point;
 import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,13 +36,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.LayoutParams;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.grantlandchew.view.VerticalPager;
@@ -49,12 +55,12 @@ public class JournalActivity extends FragmentActivity {
 
     ViewPager mViewPager;
     
-    int tripId;
+    public static int tripId;
     
     public static PointDAO pointDAO;
     
-    public static String jourCourant;
-
+    public static Point videoPoint;
+    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.journal);
@@ -128,7 +134,6 @@ public class JournalActivity extends FragmentActivity {
             Bundle args = new Bundle();
             args.putInt(DayJournalFragment.ARG_OBJECT, tripId); // Our object is just an integer :-P
             args.putString(DayJournalFragment.ARG_DATE, jours.get(i)); // Our object is just an integer :-P
-            jourCourant = jours.get(i);
             fragment.setArguments(args);
             return fragment;
         }
@@ -162,7 +167,7 @@ public class JournalActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         	//récupérer les arguments
-        	String temp_travel_id = this.getArguments().getString(DayJournalFragment.ARG_OBJECT);
+        	//String temp_travel_id = this.getArguments().getString(DayJournalFragment.ARG_OBJECT);
         	String temp_date = this.getArguments().getString(DayJournalFragment.ARG_DATE);
         	
         	//affecte la vue
@@ -175,49 +180,107 @@ public class JournalActivity extends FragmentActivity {
         	//si c'est une vidéo
         	if(temp_date.equals(JournalPagerAdapter.VIDEO_NAME)){
         		
-        		//layout 
-        		LinearLayout list = new LinearLayout(this.getActivity());
-        		list.setHorizontalGravity(1);
-        		list.setVerticalGravity(1);
-
-        		//ajouter le commentaire au layout
-    	        TextView comment = new TextView(this.getActivity());
-        		comment.setText("Aucune vidéo n'est présente.");
-        		comment.setTextSize(30);
-    	        list.addView(comment);
-    	        
-        		//ajouter l'heure au layout
-    	        //ajout du layout au pager
-    	        verticalPager.addView(list);
-    	        
+        		ArrayList<Point> videos = JournalActivity.pointDAO.getAllVideosOfTravel(tripId);
+        		
+        		if(videos != null){
+        			// on affiche les photos
+        			for (Point video : videos) {
+        				
+        				videoPoint = video;
+        				
+        				RelativeLayout list = new RelativeLayout(this.getActivity());
+        	            
+        				/*VideoView videoHolder = new VideoView(this.getActivity());
+        	            videoHolder.setMediaController(new MediaController(this.getActivity()));
+        	            videoHolder.setVideoURI(Uri.parse(video.getUri()));
+        	            videoHolder.requestFocus();
+        	            list.addView(videoHolder);*/
+        				
+        				ImageView image = new ImageView(this.getActivity());
+        				
+        				MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+    	    			retriever.setDataSource(video.getUri());
+    	    			Bitmap bitmap=retriever.getFrameAtTime(1000);
+    	    			image.setImageBitmap(Bitmap.createScaledBitmap(bitmap, 200, 320, false));
+        				
+        				image.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View arg0) {
+									Intent intent = new Intent();
+			 	        			intent.setAction(Intent.ACTION_VIEW);
+			        				intent.setDataAndType(Uri.parse("file://" + videoPoint.getUri()), "video/*");
+			        				startActivity(intent);
+							}
+						});
+        				
+        				list.addView(image);
+        				
+        	            TextView hour = new TextView(this.getActivity());
+    					hour.setText(video.getComment());
+    					hour.setTextSize(20);
+    					list.addView(hour);
+        	            
+        	            verticalPager.addView(list);
+        				
+        			}
+        		} else {
+        			//layout 
+    				LinearLayout list = new LinearLayout(this.getActivity());
+    				list.setHorizontalGravity(1);
+    				list.setVerticalGravity(1);
+    				
+    				//ajouter le commentaire au layout
+    				TextView comment = new TextView(this.getActivity());
+    				comment.setText("Aucune vidéo n'est présente.");
+    				comment.setTextSize(30);
+    				list.addView(comment);
+    				
+    				//ajouter l'heure au layout
+    				//ajout du layout au pager
+    				verticalPager.addView(list);
+        		}
         	}else{
         		
         		//sinon affichage des photos du jours
         		//récupère les photos
-        		ArrayList<Point> photos = JournalActivity.pointDAO.getAllPhotosOfDay(jourCourant);
+        		ArrayList<Point> photos = JournalActivity.pointDAO.getAllPhotosOfDay(temp_date);
         		
-        		System.out.println("YYYYYYYYYY " + jourCourant);
-        		        		
         		//pour chaque photo
         		if(photos != null){
         			// on affiche les photos
         			for (Point photo : photos) {
-        				LinearLayout list = new LinearLayout(this.getActivity());
+        				RelativeLayout list = new RelativeLayout(this.getActivity());
         				ImageView image = new ImageView(this.getActivity());
-        				image.setImageURI(Uri.parse(photo.getUri()));
-        				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
-        				image.setLayoutParams(layoutParams);
-            	        list.addView(image);
-            	        
-            	        TextView comment = new TextView(this.getActivity());
-                		comment.setText(photo.getComment());
-                		comment.setTextSize(30);
-            	        list.addView(comment);
-            	        
-            	        verticalPager.addView(list);
-            	        
-            	        
-            			System.out.println(photo.getUri());
+        				if(photo.getUri() != null) {
+        					image.setImageURI(Uri.parse(photo.getUri()));
+        					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
+        					image.setLayoutParams(layoutParams);
+        					image.setId(1);
+        					list.addView(image);
+        					
+        					TextView comment = new TextView(this.getActivity());
+        					comment.setText(photo.getComment());
+        					comment.setTextSize(20);
+        					
+        					RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+        					        RelativeLayout.LayoutParams.WRAP_CONTENT);
+        					relativeLayoutParams.addRule(RelativeLayout.BELOW,
+        					        image.getId());
+        					relativeLayoutParams.addRule(RelativeLayout.ALIGN_LEFT,
+        					        image.getId());
+        					
+        					list.addView(comment, relativeLayoutParams);
+        					
+        					TextView hour = new TextView(this.getActivity());
+        					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.FRANCE);
+        					String value = sdf.format(new Date(photo.getDate_add()));
+        					
+        					hour.setText(value);
+        					hour.setTextSize(20);
+        					list.addView(hour);
+        					
+        					verticalPager.addView(list);
+        				}
             		}
         		}else{
         			//layout 
@@ -237,39 +300,6 @@ public class JournalActivity extends FragmentActivity {
         		}
         	}
         		
-        	//récupération des places de la journée en base
-        	
-        	//pour chaque place
-//        	foreach (place : places) {
-        		//créer un layout
-   /*     		LinearLayout list = new LinearLayout(this.getActivity());
-        		//ajouter les différents éléments (image, video, texte, heure, carte)
-        		switch (type) {
-        			case 1:
-        				ImageView image = new ImageView(this.getActivity());
-        				image.setImageResource(src);
-            	        list.addView(image);
-        				break;
-        			case 2:
-        				
-        				break;
-        			case 3:
-        				
-        				break;
-        			case 4:
-        				
-        				break;
-        			default:
-        				
-        		}
-        		TextView comment = new TextView(this.getActivity());
-        		comment.setText("commentaire du point");
-        		comment.setTextSize(30);
-    	        list.addView(comment);
-        		//ajouter le layout au VerticalPager
-    	        //verticalPager.addView(list);
-//        	}
-        	//fin de l'histoire*/
             Bundle args = getArguments();
             return rootView;
         }
