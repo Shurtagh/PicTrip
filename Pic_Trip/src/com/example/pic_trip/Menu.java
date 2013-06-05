@@ -4,11 +4,13 @@ package com.example.pic_trip;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 import DAO.TravelDAO;
 import ElementObject.Travel;
+import android.R;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -29,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -144,10 +147,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public void createTrip(View button) throws ParseException {  
     	final EditText titleField = (EditText) findViewById(R.id.EditTextTripTitle);
     	String title = titleField.getText().toString();
-    	final EditText startDateField = (EditText) findViewById(R.id.EditTripStartDate);
-    	String startDate = startDateField.getText().toString();
-    	final EditText endDateField = (EditText) findViewById(R.id.EditTripEndDate);
-    	String endDate = endDateField.getText().toString();
+    	final DatePicker startDateField = (DatePicker) findViewById(R.id.EditTripStartDate);
+    	String startDate = startDateField.getDayOfMonth() + "/" + startDateField.getMonth() + "/" + startDateField.getYear();
+    	final DatePicker endDateField = (DatePicker) findViewById(R.id.EditTripEndDate);
+    	String endDate = endDateField.getDayOfMonth() + "/" + endDateField.getMonth() + "/" + endDateField.getYear();
     	final EditText descField = (EditText) findViewById(R.id.EditTextTripDesc);
     	String desc = descField.getText().toString();
     	
@@ -185,8 +188,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public void toggleGalleryResearch(View button) {  
     	final Spinner tripSearch = (Spinner) findViewById(R.id.GalleryTripSpinner);
     	final Spinner citySearch = (Spinner) findViewById(R.id.GalleryCitySpinner);
-    	final EditText startDateSearch = (EditText) findViewById(R.id.GalleryStartDateEditText);
-    	final EditText endDateSearch = (EditText) findViewById(R.id.GalleryEndDateEditText);
+    	final DatePicker startDateSearch = (DatePicker) findViewById(R.id.GalleryStartDateEditText);
+    	final DatePicker endDateSearch = (DatePicker) findViewById(R.id.GalleryEndDateEditText);
     	final Button buttonSearch = (Button) findViewById(R.id.GallerySearchButton);
     	
     	if (buttonSearch.getText().toString().matches(getResources().getString(R.string.gallery_button_show))) {
@@ -303,7 +306,19 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_newtrip, container, false);           
+            //Date picker
+            DatePicker startDate = (DatePicker) findViewById(R.id.EditTripStartDate);
+            DatePicker stopDate = (DatePicker) findViewById(R.id.EditTripEndDate);
 
+           
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+           
+            //affecte date dans datepicker
+            startDate.init(year, month, day, null);
+            stopDate.init(year, month, day, null);
             return rootView;
         }        
     }
@@ -408,7 +423,19 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_gallery, container, false);
+          //Date picker
+            DatePicker startDate = (DatePicker) findViewById(R.id.GalleryStartDateEditText);
+            DatePicker stopDate = (DatePicker) findViewById(R.id.GalleryEndDateEditText);
 
+           
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+           
+            //affecte date dans datepicker
+            startDate.init(year, month, day, null);
+            stopDate.init(year, month, day, null);
             return rootView;
         }
     }

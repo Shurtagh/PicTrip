@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:orientation="vertical"
         android:layout_height="fill_parent"> 
@@ -20,21 +19,15 @@
 		    android:layout_width="fill_parent">  
 		</EditText>
 		
-        <EditText
+		<DatePicker
             android:id="@+id/EditTripStartDate"
-            android:layout_height="wrap_content"
-		    android:hint="@string/form_trip_start_date"
-            android:inputType="date"
-		    android:layout_width="fill_parent">  
-		</EditText>
-		
-        <EditText
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" />
+
+		<DatePicker
             android:id="@+id/EditTripEndDate"
-            android:layout_height="wrap_content"
-		    android:hint="@string/form_trip_end_date"
-            android:inputType="date"
-		    android:layout_width="fill_parent">  
-		</EditText>        
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" />  
 
         <EditText
             android:id="@+id/EditTextTripDesc"
