@@ -30,5 +30,10 @@
     <string name="gallery_end_date">Date de fin</string>
     <string name="gallery_button_show">Rechercher</string>
     <string name="gallery_button_hide">Cacher</string>
+    
+    <string name="grid_button_1">Editer</string>
+    <string name="grid_button_2">Journal</string>
+    <string name="grid_button_3">Voyage</string>
+    <string name="grid_button_4">Exploration</string>
 
 </resources>

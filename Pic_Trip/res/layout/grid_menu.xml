@@ -12,13 +12,13 @@
 	    android:layout_height="fill_parent" >
 	    
 	    <Button android:id="@+id/btnEditer" 
-	        android:text="Editer" 
+	        android:text="@string/grid_button_1" 
 	        android:scaleType="fitCenter"
 	        android:drawableTop="@drawable/editer" 
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
 	    <Button android:id="@+id/btnJournal" 
-	        android:text="Journal" 
+	        android:text="@string/grid_button_2" 
 	        android:drawableTop="@drawable/journal" 
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
@@ -30,12 +30,12 @@
 	    android:layout_weight="1" >
 	    
 	    <Button android:id="@+id/btnTrace" 
-	        android:text="Tracé Intéractif"
+	        android:text="@string/grid_button_3"
 	        android:drawableTop="@drawable/voyage"
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
 	    <Button android:id="@+id/btnExplore" 
-	        android:text="Exploration" 
+	        android:text="@string/grid_button_4" 
 	        android:drawableTop="@drawable/exploration"
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>    

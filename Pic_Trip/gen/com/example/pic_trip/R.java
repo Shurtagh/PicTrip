@@ -183,11 +183,11 @@ public final class R {
         public static final int GalleryStartDateEditText=0x7f090009;
         public static final int GalleryTripSpinner=0x7f090007;
         public static final int Layout_dates=0x7f09002c;
-        public static final int OptionsButton=0x7f09001a;
+        public static final int OptionsButton=0x7f090017;
         public static final int OptionsCheckBox=0x7f090015;
-        public static final int OptionsText=0x7f090017;
+        public static final int OptionsText=0x7f090018;
         public static final int OptionsTitle=0x7f090016;
-        public static final int OptionsUnity=0x7f090019;
+        public static final int OptionsUnity=0x7f09001a;
         public static final int PhoneImageGrid=0x7f09001c;
         public static final int TextView1=0x7f090005;
         public static final int TextViewFormDesc=0x7f09000f;
@@ -218,7 +218,7 @@ public final class R {
         public static final int snippet=0x7f090028;
         public static final int thumbImage=0x7f090020;
         public static final int title=0x7f090027;
-        public static final int tpsTracking=0x7f090018;
+        public static final int tpsTracking=0x7f090019;
     }
     public static final class layout {
         public static final int activity_collection=0x7f030000;
@@ -266,6 +266,10 @@ public final class R {
         public static final int gallery_button_show=0x7f070016;
         public static final int gallery_end_date=0x7f070015;
         public static final int gallery_start_date=0x7f070014;
+        public static final int grid_button_1=0x7f070018;
+        public static final int grid_button_2=0x7f070019;
+        public static final int grid_button_3=0x7f07001a;
+        public static final int grid_button_4=0x7f07001b;
         public static final int hello_world=0x7f070002;
         public static final int options_button=0x7f070013;
         public static final int options_checkbox=0x7f07000f;
