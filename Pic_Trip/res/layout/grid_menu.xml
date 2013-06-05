@@ -13,13 +13,13 @@
 	    
 	    <Button android:id="@+id/btnEditer" 
 	        android:text="Editer" 
-	        android:drawableTop="@android:drawable/btn_star_big_on" 
 	        android:scaleType="fitCenter"
+	        android:drawableTop="@drawable/editer" 
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
 	    <Button android:id="@+id/btnJournal" 
-	        android:text="Diaporama" 
-	        android:drawableTop="@drawable/logodiaporama" 
+	        android:text="Journal" 
+	        android:drawableTop="@drawable/journal" 
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
 	</LinearLayout>
@@ -30,13 +30,13 @@
 	    android:layout_weight="1" >
 	    
 	    <Button android:id="@+id/btnTrace" 
-	        android:text="Tracé Intéractif" 
-	        android:drawableTop="@android:drawable/btn_star_big_on" 
+	        android:text="Tracé Intéractif"
+	        android:drawableTop="@drawable/voyage"
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>
 	    <Button android:id="@+id/btnExplore" 
 	        android:text="Exploration" 
-	        android:drawableTop="@android:drawable/btn_star_big_on" 
+	        android:drawableTop="@drawable/exploration"
 	        style="@style/MenuButton"
 	        android:background="@color/Gray"/>    
 	</LinearLayout>
