@@ -182,7 +182,6 @@ public final class R {
         public static final int GallerySearchButton=0x7f09000b;
         public static final int GalleryStartDateEditText=0x7f090009;
         public static final int GalleryTripSpinner=0x7f090007;
-        public static final int Layout_dates=0x7f09002c;
         public static final int OptionsButton=0x7f090017;
         public static final int OptionsCheckBox=0x7f090015;
         public static final int OptionsText=0x7f090018;
@@ -191,13 +190,13 @@ public final class R {
         public static final int PhoneImageGrid=0x7f09001c;
         public static final int TextView1=0x7f090005;
         public static final int TextViewFormDesc=0x7f09000f;
-        public static final int TripDateDebut=0x7f09002d;
-        public static final int TripDateFin=0x7f09002e;
-        public static final int TripDesc=0x7f09002f;
+        public static final int TripDate=0x7f09002c;
+        public static final int TripDesc=0x7f09002e;
         public static final int TripListView=0x7f09001b;
-        public static final int TripTitle=0x7f09002b;
+        public static final int TripNumber=0x7f09002b;
+        public static final int TripTitle=0x7f09002d;
         public static final int VerticalPager=0x7f090006;
-        public static final int action_settings=0x7f090030;
+        public static final int action_settings=0x7f09002f;
         public static final int addPictures=0x7f090003;
         public static final int btnEditer=0x7f090022;
         public static final int btnExplore=0x7f090025;
