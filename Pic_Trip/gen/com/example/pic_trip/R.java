@@ -171,7 +171,7 @@ public final class R {
     }
     public static final class id {
         public static final int ButtonSendForm=0x7f090014;
-        public static final int EditText1=0x7f090028;
+        public static final int EditText1=0x7f090029;
         public static final int EditTextTripDesc=0x7f090013;
         public static final int EditTextTripTitle=0x7f090010;
         public static final int EditTripEndDate=0x7f090012;
@@ -182,41 +182,42 @@ public final class R {
         public static final int GallerySearchButton=0x7f09000b;
         public static final int GalleryStartDateEditText=0x7f090009;
         public static final int GalleryTripSpinner=0x7f090007;
-        public static final int Layout_dates=0x7f09002b;
-        public static final int OptionsButton=0x7f090017;
+        public static final int Layout_dates=0x7f09002c;
+        public static final int OptionsButton=0x7f09001a;
         public static final int OptionsCheckBox=0x7f090015;
+        public static final int OptionsText=0x7f090017;
         public static final int OptionsTitle=0x7f090016;
-        public static final int PhoneImageGrid=0x7f09001b;
+        public static final int OptionsUnity=0x7f090019;
+        public static final int PhoneImageGrid=0x7f09001c;
         public static final int TextView1=0x7f090005;
         public static final int TextViewFormDesc=0x7f09000f;
-        public static final int TripDateDebut=0x7f09002c;
-        public static final int TripDateFin=0x7f09002d;
-        public static final int TripDesc=0x7f09002e;
-        public static final int TripListView=0x7f09001a;
-        public static final int TripTitle=0x7f09002a;
+        public static final int TripDateDebut=0x7f09002d;
+        public static final int TripDateFin=0x7f09002e;
+        public static final int TripDesc=0x7f09002f;
+        public static final int TripListView=0x7f09001b;
+        public static final int TripTitle=0x7f09002b;
         public static final int VerticalPager=0x7f090006;
-        public static final int action_settings=0x7f09002f;
+        public static final int action_settings=0x7f090030;
         public static final int addPictures=0x7f090003;
-        public static final int btnEditer=0x7f090021;
-        public static final int btnExplore=0x7f090024;
-        public static final int btnJournal=0x7f090022;
-        public static final int btnTrace=0x7f090023;
+        public static final int btnEditer=0x7f090022;
+        public static final int btnExplore=0x7f090025;
+        public static final int btnJournal=0x7f090023;
+        public static final int btnTrace=0x7f090024;
         public static final int days=0x7f09000d;
         public static final int demo_collection_button=0x7f09000e;
         public static final int enregistrer=0x7f090004;
-        public static final int gallery1=0x7f09001e;
-        public static final int icon=0x7f090025;
-        public static final int interactif=0x7f09001d;
-        public static final int itemCheckBox=0x7f090020;
+        public static final int gallery1=0x7f09001f;
+        public static final int icon=0x7f090026;
+        public static final int interactif=0x7f09001e;
+        public static final int itemCheckBox=0x7f090021;
         public static final int map=0x7f090002;
         public static final int pager=0x7f090000;
         public static final int pager_title_strip=0x7f090001;
-        public static final int preview=0x7f090029;
-        public static final int selectBtn=0x7f09001c;
-        public static final int snippet=0x7f090027;
-        public static final int textView1=0x7f090019;
-        public static final int thumbImage=0x7f09001f;
-        public static final int title=0x7f090026;
+        public static final int preview=0x7f09002a;
+        public static final int selectBtn=0x7f09001d;
+        public static final int snippet=0x7f090028;
+        public static final int thumbImage=0x7f090020;
+        public static final int title=0x7f090027;
         public static final int tpsTracking=0x7f090018;
     }
     public static final class layout {
@@ -261,14 +262,17 @@ public final class R {
         public static final int form_trip_end_date=0x7f070009;
         public static final int form_trip_start_date=0x7f070008;
         public static final int form_trip_title=0x7f070007;
-        public static final int gallery_button_hide=0x7f070014;
-        public static final int gallery_button_show=0x7f070013;
-        public static final int gallery_end_date=0x7f070012;
-        public static final int gallery_start_date=0x7f070011;
+        public static final int gallery_button_hide=0x7f070017;
+        public static final int gallery_button_show=0x7f070016;
+        public static final int gallery_end_date=0x7f070015;
+        public static final int gallery_start_date=0x7f070014;
         public static final int hello_world=0x7f070002;
-        public static final int options_button=0x7f070010;
+        public static final int options_button=0x7f070013;
         public static final int options_checkbox=0x7f07000f;
+        public static final int options_text=0x7f070010;
         public static final int options_title=0x7f07000e;
+        public static final int options_tracking=0x7f070011;
+        public static final int options_tracking_unity=0x7f070012;
         public static final int presentation_button=0x7f07000d;
     }
     public static final class style {
