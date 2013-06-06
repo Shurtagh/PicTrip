@@ -44,14 +44,15 @@
 
     <EditText
         android:id="@+id/tpsTracking"
-        android:layout_width="32dp"
+        android:layout_width="64dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/OptionsCheckBox"
         android:layout_below="@+id/OptionsText"
         android:ems="10"
         android:hint="@string/options_tracking"
         android:inputType="numberSigned"
-        android:text="@string/options_tracking" >
+        android:text="@string/options_tracking"
+        android:gravity="center" >
 
         <requestFocus />
     </EditText>

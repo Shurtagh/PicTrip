@@ -16,12 +16,12 @@
 	        android:scaleType="fitCenter"
 	        android:drawableTop="@drawable/editer" 
 	        style="@style/MenuButton"
-	        android:background="@color/Gray"/>
+	        android:background="@color/LightGoldenrodYellow"/>
 	    <Button android:id="@+id/btnJournal" 
 	        android:text="@string/grid_button_2" 
 	        android:drawableTop="@drawable/journal" 
 	        style="@style/MenuButton"
-	        android:background="@color/Gray"/>
+	        android:background="@color/LightSalmon"/>
 	</LinearLayout>
 	
 	<LinearLayout android:orientation="horizontal" 
@@ -33,12 +33,12 @@
 	        android:text="@string/grid_button_3"
 	        android:drawableTop="@drawable/voyage"
 	        style="@style/MenuButton"
-	        android:background="@color/Gray"/>
+	        android:background="@color/SkyBlue"/>
 	    <Button android:id="@+id/btnExplore" 
 	        android:text="@string/grid_button_4" 
 	        android:drawableTop="@drawable/exploration"
 	        style="@style/MenuButton"
-	        android:background="@color/Gray"/>    
+	        android:background="@color/LightGreen"/>    
 	</LinearLayout>
 
 

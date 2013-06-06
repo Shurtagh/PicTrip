@@ -22,7 +22,7 @@
     <string name="options_title">Options</string>
     <string name="options_checkbox">Tracking GPS</string>
     <string name="options_text">Fréquence du tracking</string>
-    <string name="options_tracking">1</string>
+    <string name="options_tracking">20</string>
     <string name="options_tracking_unity">seconde(s)</string>
     <string name="options_button">Enregistrer</string>
     

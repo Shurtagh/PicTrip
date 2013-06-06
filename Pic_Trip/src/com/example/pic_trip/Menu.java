@@ -10,9 +10,10 @@ import java.util.HashMap;
 
 import DAO.TravelDAO;
 import ElementObject.Travel;
-import android.R;
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,6 +38,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class Menu extends FragmentActivity implements ActionBar.TabListener {
 
@@ -147,12 +150,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public void createTrip(View button) throws ParseException {  
     	final EditText titleField = (EditText) findViewById(R.id.EditTextTripTitle);
     	String title = titleField.getText().toString();
-    	final DatePicker startDateField = (DatePicker) findViewById(R.id.EditTripStartDate);
-    	String startDate = startDateField.getDayOfMonth() + "/" + startDateField.getMonth() + "/" + startDateField.getYear();
-    	final DatePicker endDateField = (DatePicker) findViewById(R.id.EditTripEndDate);
-    	String endDate = endDateField.getDayOfMonth() + "/" + endDateField.getMonth() + "/" + endDateField.getYear();
     	final EditText descField = (EditText) findViewById(R.id.EditTextTripDesc);
     	String desc = descField.getText().toString();
+    	final TextView dateDebut = (TextView) findViewById(R.id.TripDateDebutValue);
+    	final TextView dateFin = (TextView) findViewById(R.id.TripDateFinValue);
     	
     	boolean valid = true;
     	
@@ -164,8 +165,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     	}
     	if (valid) {
     		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-    		Date debut = (Date) df.parse(startDate);
-    		Date fin = (Date) df.parse(endDate);
+    		Date debut = (Date) df.parse(dateDebut.getText().toString());
+    		Date fin = (Date) df.parse(dateFin.getText().toString());
     		Travel t = new Travel(title, debut.getTime(), fin.getTime(), desc);
     		t.save();
     		AlertDialog.Builder adb = new AlertDialog.Builder(this);
@@ -182,7 +183,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 	            }
     		});
     		adb.show();
-    	}	
+    	}
     }
     
     public void toggleGalleryResearch(View button) {  
@@ -302,23 +303,67 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     }    
     
     public static class NewTripSectionFragment extends Fragment {
-
+    	
+    	DatePicker startDate;
+    	DatePicker stopDate;
+    	TextView dateDebut;
+    	TextView dateFin;
+    	
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_newtrip, container, false);           
             //Date picker
-            DatePicker startDate = (DatePicker) findViewById(R.id.EditTripStartDate);
-            DatePicker stopDate = (DatePicker) findViewById(R.id.EditTripEndDate);
-
-           
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-           
+            //startDate = (DatePicker) rootView.findViewById(R.id.TripDateDebut);
+            //stopDate = (DatePicker) rootView.findViewById(R.id.TripDateFin);
+            
+            dateDebut = (TextView) rootView.findViewById(R.id.TripDateDebutValue);
+            dateFin = (TextView) rootView.findViewById(R.id.TripDateFinValue);
+            
+            dateDebut.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					OnDateSetListener DebutDateChange = new OnDateSetListener() {
+						@Override
+						public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+							dateDebut.setText(String.valueOf(arg3) + "/" + String.valueOf(arg2 + 1) + "/" + String.valueOf(arg1));
+						}
+						
+					};
+					Calendar c = Calendar.getInstance();
+					int year = c.get(Calendar.YEAR);
+					int month = c.get(Calendar.MONTH);
+					int day = c.get(Calendar.DAY_OF_MONTH);
+					DatePickerDialog dialog = new DatePickerDialog(arg0.getContext(), DebutDateChange, year, month, day);
+					dialog.show();
+				}
+			});
+            
+            dateFin.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					// TODO Auto-generated method stub
+					OnDateSetListener DebutDateChange = new OnDateSetListener() {
+						@Override
+						public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+							dateFin.setText(String.valueOf(arg3) + "/" + String.valueOf(arg2 + 1) + "/" + String.valueOf(arg1));
+						}
+						
+					};
+					Calendar c = Calendar.getInstance();
+					int year = c.get(Calendar.YEAR);
+					int month = c.get(Calendar.MONTH);
+					int day = c.get(Calendar.DAY_OF_MONTH);
+					DatePickerDialog dialog = new DatePickerDialog(arg0.getContext(), DebutDateChange, year, month, day);
+					dialog.show();
+				}
+			});
+            
             //affecte date dans datepicker
-            startDate.init(year, month, day, null);
-            stopDate.init(year, month, day, null);
+            //startDate.init(year, month, day, null);
+            //stopDate.init(year, month, day, null);
             return rootView;
         }        
     }
@@ -328,7 +373,6 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_triplist, container, false);
-            
             
           //creation liste voyages
             ListView tripList = (ListView) rootView.findViewById(R.id.TripListView);
@@ -340,18 +384,21 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     		ArrayList<Travel> list =  travelDAO.getAll();
     		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     		if(list != null) {
+    			int tripNumber = 1;
 	    		for(Travel tr : list) {
 	    			map = new HashMap<String, String>();
-	    	        map.put("date_debut", sdf.format(new Date(tr.getDate_start())));
-	    	        map.put("date_fin", sdf.format(new Date(tr.getDate_stop())));
+	    			map.put("numero", String.valueOf(tripNumber));
+	    	        map.put("date_debut", "du " + sdf.format(new Date(tr.getDate_start())));
+	    	        map.put("date_fin", " au " + sdf.format(new Date(tr.getDate_stop())));
 	    	        map.put("title", tr.getName());
 	    	        map.put("desc", tr.getDescription());
 	    	        listItem.add(map);
+	    	        tripNumber++;
 	    		}
     		}
     		
             //Création d'un SimpleAdapter qui se chargera de mettre les items présent dans notre list (listItem) dans la vue triplist
-            SimpleAdapter mSchedule = new SimpleAdapter(context, listItem, R.layout.trip_list_element, new String[] {"date_debut", "date_fin", "title", "desc"}, new int[] {R.id.TripDateDebut, R.id.TripDateFin, R.id.TripTitle, R.id.TripDesc});
+            SimpleAdapter mSchedule = new SimpleAdapter(context, listItem, R.layout.trip_list_element, new String[] {"numero","date_debut", "date_fin", "title", "desc"}, new int[] {R.id.TripNumber, R.id.TripListDateDebut, R.id.TripListDateFin, R.id.TripTitle, R.id.TripDesc});
 
             //On attribut à notre listView l'adapter que l'on vient de créer
             tripList.setAdapter(mSchedule);
@@ -424,8 +471,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_gallery, container, false);
           //Date picker
-            DatePicker startDate = (DatePicker) findViewById(R.id.GalleryStartDateEditText);
-            DatePicker stopDate = (DatePicker) findViewById(R.id.GalleryEndDateEditText);
+            DatePicker startDate = (DatePicker) rootView.findViewById(R.id.GalleryStartDateEditText);
+            DatePicker stopDate = (DatePicker) rootView.findViewById(R.id.GalleryEndDateEditText);
 
            
             final Calendar c = Calendar.getInstance();
