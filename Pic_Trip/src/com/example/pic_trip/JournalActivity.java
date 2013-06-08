@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -189,6 +191,7 @@ public class JournalActivity extends FragmentActivity {
         				videoPoint = video;
         				
         				RelativeLayout list = new RelativeLayout(this.getActivity());
+        				list.setBackgroundDrawable(this.getResources().getDrawable(R.drawable.paper));
         	            
         				/*VideoView videoHolder = new VideoView(this.getActivity());
         	            videoHolder.setMediaController(new MediaController(this.getActivity()));
@@ -215,10 +218,11 @@ public class JournalActivity extends FragmentActivity {
         				
         				list.addView(image);
         				
-        	            TextView hour = new TextView(this.getActivity());
-    					hour.setText(video.getComment());
-    					hour.setTextSize(20);
-    					list.addView(hour);
+        	            TextView comment = new TextView(this.getActivity());
+    					comment.setText("\t Commentaire : \n" + video.getComment());
+    					comment.setTextSize(18);
+    					comment.setTextColor(this.getResources().getColor(R.color.Gray));
+    					list.addView(comment);
         	            
         	            verticalPager.addView(list);
         				
@@ -231,8 +235,9 @@ public class JournalActivity extends FragmentActivity {
     				
     				//ajouter le commentaire au layout
     				TextView comment = new TextView(this.getActivity());
+    				list.setBackgroundDrawable(this.getResources().getDrawable(R.drawable.paper));
     				comment.setText("Aucune vidéo n'est présente.");
-    				comment.setTextSize(30);
+    				comment.setTextSize(25);
     				list.addView(comment);
     				
     				//ajouter l'heure au layout
@@ -250,6 +255,7 @@ public class JournalActivity extends FragmentActivity {
         			// on affiche les photos
         			for (Point photo : photos) {
         				RelativeLayout list = new RelativeLayout(this.getActivity());
+        				list.setBackgroundDrawable(this.getResources().getDrawable(R.drawable.paper));
         				ImageView image = new ImageView(this.getActivity());
         				if(photo.getUri() != null) {
         					image.setImageURI(Uri.parse(photo.getUri()));
@@ -259,8 +265,9 @@ public class JournalActivity extends FragmentActivity {
         					list.addView(image);
         					
         					TextView comment = new TextView(this.getActivity());
-        					comment.setText(photo.getComment());
-        					comment.setTextSize(20);
+        					comment.setText("\t Commentaire : \n" + photo.getComment());
+        					comment.setTextSize(18);
+        					comment.setTextColor(this.getResources().getColor(R.color.Gray));
         					
         					RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
         					        RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -275,7 +282,7 @@ public class JournalActivity extends FragmentActivity {
         					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.FRANCE);
         					String value = sdf.format(new Date(photo.getDate_add()));
         					
-        					hour.setText(value);
+        					hour.setText("Photo prise à : " + value);
         					hour.setTextSize(20);
         					list.addView(hour);
         					
@@ -285,6 +292,7 @@ public class JournalActivity extends FragmentActivity {
         		}else{
         			//layout 
     				LinearLayout list = new LinearLayout(this.getActivity());
+    				list.setBackgroundDrawable(this.getResources().getDrawable(R.drawable.paper));
     				list.setHorizontalGravity(1);
     				list.setVerticalGravity(1);
     				

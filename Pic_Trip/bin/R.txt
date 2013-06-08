@@ -195,7 +195,8 @@ int drawable editer 0x7f020018
 int drawable exploration 0x7f020019
 int drawable ic_launcher 0x7f02001a
 int drawable journal 0x7f02001b
-int drawable voyage 0x7f02001c
+int drawable paper 0x7f02001c
+int drawable voyage 0x7f02001d
 int id ButtonSendForm 0x7f050019
 int id EditText1 0x7f05002e
 int id EditTextTripDesc 0x7f050018
