@@ -8,7 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import DAO.PointDAO;
 import DAO.TravelDAO;
+import ElementObject.Point;
 import ElementObject.Travel;
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -18,6 +20,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -31,13 +34,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class Menu extends FragmentActivity implements ActionBar.TabListener {
@@ -51,6 +55,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     static Context context = null;
     
     private static TravelDAO travelDAO = null;
+    
+    public static PointDAO pointDAO;
     
     private static int IDGlobal;
 
@@ -70,6 +76,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         
         Menu.context = getApplicationContext();
         travelDAO = new TravelDAO(Menu.getContext());
+        pointDAO = new PointDAO(Menu.getContext());
         
         //travelDAO.deleteAll();
         
@@ -183,29 +190,6 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 	            }
     		});
     		adb.show();
-    	}
-    }
-    
-    public void toggleGalleryResearch(View button) {  
-    	final Spinner tripSearch = (Spinner) findViewById(R.id.GalleryTripSpinner);
-    	final Spinner citySearch = (Spinner) findViewById(R.id.GalleryCitySpinner);
-    	final DatePicker startDateSearch = (DatePicker) findViewById(R.id.GalleryStartDateEditText);
-    	final DatePicker endDateSearch = (DatePicker) findViewById(R.id.GalleryEndDateEditText);
-    	final Button buttonSearch = (Button) findViewById(R.id.GallerySearchButton);
-    	
-    	if (buttonSearch.getText().toString().matches(getResources().getString(R.string.gallery_button_show))) {
-    		tripSearch.setVisibility(View.VISIBLE);
-    		citySearch.setVisibility(View.VISIBLE);
-    		startDateSearch.setVisibility(View.VISIBLE);
-    		endDateSearch.setVisibility(View.VISIBLE);   
-    		buttonSearch.setText(R.string.gallery_button_hide);
-    	}
-    	else {
-    		tripSearch.setVisibility(View.GONE);
-    		citySearch.setVisibility(View.GONE);
-    		startDateSearch.setVisibility(View.GONE);
-    		endDateSearch.setVisibility(View.GONE);
-    		buttonSearch.setText(R.string.gallery_button_show);
     	}
     }
     
@@ -374,7 +358,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_triplist, container, false);
             
-          //creation liste voyages
+            //creation liste voyages
             ListView tripList = (ListView) rootView.findViewById(R.id.TripListView);
             ArrayList<HashMap<String, String>> listItem = new ArrayList<HashMap<String, String>>();
      
@@ -466,26 +450,127 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     }
     
     public static class GallerySectionFragment extends Fragment {
-
+    	
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_gallery, container, false);
-          //Date picker
-            DatePicker startDate = (DatePicker) rootView.findViewById(R.id.GalleryStartDateEditText);
-            DatePicker stopDate = (DatePicker) rootView.findViewById(R.id.GalleryEndDateEditText);
+            
+            //creation liste voyages
+            GridView gallery = (GridView) rootView.findViewById(R.id.GalleryGridView);
+            
+            gallery.setAdapter(new GalleryAdapter(this.getActivity()));
+/*		            
+            gallery.setOnItemClickListener(new OnItemClickListener() {
 
-           
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-           
-            //affecte date dans datepicker
-            startDate.init(year, month, day, null);
-            stopDate.init(year, month, day, null);
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+					// TODO Auto-generated method stub
+					ArrayList<Travel> list =  travelDAO.getAll();
+					int id = list.get(arg2).getId();
+					intent.putExtra("id", id);
+	            	startActivity(intent);
+				}
+			});
+*/            
             return rootView;
         }
     }
+    
+    public static class GalleryAdapter extends BaseAdapter {    
+    	
+        private Context mContext;
+        private ArrayList<Travel> triplist =  travelDAO.getAll();
+        
+        public GalleryAdapter(Context c) {
+            mContext = c;
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return triplist.size();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+        	Travel tr = triplist.get(position);
+            View v;
+            if (convertView == null) {
+            	//on recupere le layout d'un album
+                LayoutInflater li = LayoutInflater.from(mContext);
+                v = li.inflate(R.layout.gallery_album, null);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                
+                TextView title = (TextView)v.findViewById(R.id.GalleryTitle);
+                title.setText(tr.getName());
+                TextView date = (TextView)v.findViewById(R.id.GalleryDate);
+                String dateValue = sdf.format(new Date(tr.getDate_start())) + "\n" + sdf.format(new Date(tr.getDate_stop()));
+                date.setText(dateValue);
+                
+    		    ArrayList<Point> photos = Menu.pointDAO.getAllPhotosOfTravel(tr.getId());
+    		    ArrayList<Uri> photosUri = new ArrayList<Uri>();
+    		    for (int i = 0; i < 4; i++) {
+    		    	if (photos != null && i < photos.size()) {
+    		    		photosUri.add(Uri.parse(photos.get(i).getUri()));    		    		
+    		    	}
+    		    	else {
+    		    		photosUri.add(null);
+    		    	}
+	    	    }
+                ImageView photo1 = (ImageView)v.findViewById(R.id.GalleryPhoto1);
+                if (photosUri.get(0) != null) {
+                	photo1.setImageURI(photosUri.get(0));                	
+                }
+                else {
+                	photo1.setVisibility(View.INVISIBLE);
+                }
+                ImageView photo2 = (ImageView)v.findViewById(R.id.GalleryPhoto2);
+                if (photosUri.get(1) != null) {
+                	photo2.setImageURI(photosUri.get(1));               	
+                }
+                else {
+                	photo2.setVisibility(View.INVISIBLE);
+                }
+                
+                ImageView photo3 = (ImageView)v.findViewById(R.id.GalleryPhoto3);
+                if (photosUri.get(2) != null) {
+                	photo3.setImageURI(photosUri.get(2));                	
+                }
+                else {
+                	photo3.setVisibility(View.INVISIBLE);
+                }
+                ImageView photo4 = (ImageView)v.findViewById(R.id.GalleryPhoto4);
+                if (photosUri.get(3) != null) {
+                	photo4.setImageURI(photosUri.get(3));                	
+                }
+                else {
+                	photo4.setVisibility(View.INVISIBLE);
+                }
+
+            }
+            else
+            {
+                v = convertView;
+            }
+            return v;
+        }
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+		
+    }
+
     
     public static class OptionsSectionFragment extends Fragment {
 

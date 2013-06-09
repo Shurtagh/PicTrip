@@ -1,42 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <Spinner
-        android:id="@+id/GalleryTripSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Spinner
-        android:id="@+id/GalleryCitySpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-	
-    <DatePicker
-        android:id="@+id/GalleryStartDateEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:orientation="vertical"
+    android:background="@color/Black" >
     
-    <DatePicker
-        android:id="@+id/GalleryEndDateEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-    <Button
-        android:id="@+id/GallerySearchButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"  
-		android:onClick="toggleGalleryResearch"
-        android:text="@string/gallery_button_hide" />
-
     <GridView
         android:id="@+id/GalleryGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="4" >
+        android:numColumns="auto_fit"
+        android:verticalSpacing="2pt"
+        android:horizontalSpacing="2pt"
+        android:columnWidth="75pt"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:layout_margin="5dp">
     </GridView>
 
 </LinearLayout>
