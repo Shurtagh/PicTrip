@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:numColumns="auto_fit"
-        android:verticalSpacing="2pt"
+        android:verticalSpacing="25pt"
         android:horizontalSpacing="2pt"
-        android:columnWidth="75pt"
+        android:columnWidth="120pt"
         android:stretchMode="columnWidth"
         android:gravity="center"
         android:layout_margin="5dp">

@@ -1,72 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-
-    <ImageView
-        android:id="@+id/GalleryPhoto4"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:rotation="45"
-		android:background="@color/White"
-		android:padding="1dp"
-        android:layout_width="50pt"
-        android:layout_height="50pt"
-        android:src="@drawable/common_signin_btn_icon_disabled_light" />
-
-    <ImageView
-        android:id="@+id/GalleryPhoto3"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:rotation="25"
-		android:background="@color/White"
-		android:padding="1dp"
-        android:layout_width="50pt"
-        android:layout_height="50pt"
-        android:src="@drawable/common_signin_btn_icon_disabled_focus_dark" />
-
-    <ImageView
-        android:id="@+id/GalleryPhoto2"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:rotation="10"
-		android:background="@color/White"
-		android:padding="1dp"
-        android:layout_width="50pt"
-        android:layout_height="50pt"
-        android:src="@drawable/common_signin_btn_icon_disabled_dark" />
-
-    <ImageView
-        android:id="@+id/GalleryPhoto1"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:rotation="0"
-		android:background="@color/White"
-		android:padding="1dp"
-        android:layout_width="50pt"
-        android:layout_height="50pt"
-        android:src="@drawable/common_signin_btn_icon_dark" />
-
-    <TextView
-        android:id="@+id/GalleryTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/GalleryPhoto1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:text="nom du voyage"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="16pt" />
-
-    <TextView
-        android:id="@+id/GalleryDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/GalleryTitle"
-        android:text="date du voyage"
-        android:textColor="@color/Gray"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-</RelativeLayout>
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+	<RelativeLayout 
+	    android:layout_width="120pt"
+	    android:layout_height="120pt"
+		 >
+	
+	    <ImageView
+	        android:id="@+id/GalleryPhoto2"
+	        android:layout_width="60pt"
+	        android:layout_height="60pt"
+	        android:layout_alignParentTop="true"
+	        android:layout_alignParentRight="true"
+	        android:background="@color/White"
+	        android:padding="1dp"
+	        android:src="@drawable/common_signin_btn_icon_disabled_dark" />
+	
+	    <ImageView
+	        android:id="@+id/GalleryPhoto3"
+	        android:layout_width="60pt"
+	        android:layout_height="60pt"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentLeft="true"
+	        android:background="@color/White"
+	        android:padding="1dp"
+	        android:src="@drawable/common_signin_btn_icon_disabled_focus_dark" />
+	
+	    <ImageView
+	        android:id="@+id/GalleryPhoto4"
+	        android:layout_width="60pt"
+	        android:layout_height="60pt"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentRight="true"
+	        android:background="@color/White"
+	        android:padding="1dp"
+	        android:src="@drawable/common_signin_btn_icon_disabled_light" />
+	
+	    <ImageView
+	        android:id="@+id/GalleryPhoto1"
+	        android:layout_width="60pt"
+	        android:layout_height="60pt"
+	        android:layout_alignParentTop="true"
+	        android:layout_alignParentLeft="true"
+	        android:background="@color/White"
+	        android:padding="1dp"
+	        android:src="@drawable/common_signin_btn_icon_dark" />
+	
+	</RelativeLayout>
+	<TextView
+	        android:id="@+id/GalleryTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="18dp"
+	        android:text="nom du voyage"
+	        android:textColor="@color/White"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textSize="16pt" />
+	
+	    <TextView
+	        android:id="@+id/GalleryDate"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="date du voyage"
+	        android:textColor="@color/Gray"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+</LinearLayout>

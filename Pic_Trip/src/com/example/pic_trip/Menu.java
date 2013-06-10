@@ -451,27 +451,30 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     
     public static class GallerySectionFragment extends Fragment {
     	
+    	private GridView gallery;
+    	
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_gallery, container, false);
             
             //creation liste voyages
-            GridView gallery = (GridView) rootView.findViewById(R.id.GalleryGridView);
+            gallery = (GridView) rootView.findViewById(R.id.GalleryGridView);
             
             gallery.setAdapter(new GalleryAdapter(this.getActivity()));
-/*		            
+		            
             gallery.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 					// TODO Auto-generated method stub
-					ArrayList<Travel> list =  travelDAO.getAll();
+					/*ArrayList<Travel> list =  travelDAO.getAll();
 					int id = list.get(arg2).getId();
 					intent.putExtra("id", id);
-	            	startActivity(intent);
+	            	startActivity(intent);*/
+		            gallery.setAdapter(new AlbumAdapter(Menu.getContext(), arg1.getId()));					
 				}
 			});
-*/            
+            
             return rootView;
         }
     }
@@ -479,10 +482,11 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     public static class GalleryAdapter extends BaseAdapter {    
     	
         private Context mContext;
-        private ArrayList<Travel> triplist =  travelDAO.getAll();
+        private ArrayList<Travel> triplist = new ArrayList<Travel>();
         
         public GalleryAdapter(Context c) {
             mContext = c;
+            triplist =  travelDAO.getAll();
         }
 
         @Override
@@ -512,22 +516,19 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     		    ArrayList<Point> photos = Menu.pointDAO.getAllPhotosOfTravel(tr.getId());
     		    ArrayList<Uri> photosUri = new ArrayList<Uri>();
     		    for (int i = 0; i < 4; i++) {
-    		    	if (photos != null && i < photos.size()) {
-    		    		photosUri.add(Uri.parse(photos.get(i).getUri()));    		    		
-    		    	}
-    		    	else {
-    		    		photosUri.add(null);
-    		    	}
+    		    	if(photos != null && i < photos.size() && photos.get(i) != null) {
+		    			photosUri.add(Uri.parse(photos.get(i).getUri()));    		    		
+    		    	}    		    	
 	    	    }
                 ImageView photo1 = (ImageView)v.findViewById(R.id.GalleryPhoto1);
-                if (photosUri.get(0) != null) {
+                if(photosUri.size() > 0) {
                 	photo1.setImageURI(photosUri.get(0));                	
                 }
                 else {
                 	photo1.setVisibility(View.INVISIBLE);
                 }
                 ImageView photo2 = (ImageView)v.findViewById(R.id.GalleryPhoto2);
-                if (photosUri.get(1) != null) {
+                if (photosUri.size() > 1) {
                 	photo2.setImageURI(photosUri.get(1));               	
                 }
                 else {
@@ -535,14 +536,14 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
                 }
                 
                 ImageView photo3 = (ImageView)v.findViewById(R.id.GalleryPhoto3);
-                if (photosUri.get(2) != null) {
+                if (photosUri.size() > 2) {
                 	photo3.setImageURI(photosUri.get(2));                	
                 }
                 else {
                 	photo3.setVisibility(View.INVISIBLE);
                 }
                 ImageView photo4 = (ImageView)v.findViewById(R.id.GalleryPhoto4);
-                if (photosUri.get(3) != null) {
+                if (photosUri.size() > 3) {
                 	photo4.setImageURI(photosUri.get(3));                	
                 }
                 else {
@@ -550,6 +551,60 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
                 }
 
             }
+            else
+            {
+                v = convertView;
+            }
+            v.setId(tr.getId());
+            return v;
+        }
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+		
+    }
+
+    public static class AlbumAdapter extends BaseAdapter {    
+    	
+        private Context mContext;
+        private int mtripId;
+        private ArrayList<Point> triplistpoints =  new ArrayList<Point>();
+        
+        public AlbumAdapter(Context c, int tripId) {
+            mContext = c;
+            mtripId = tripId;
+            System.out.println("id travel :" + tripId);
+            triplistpoints =  pointDAO.getAllPhotosOfTravel(mtripId);
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return triplistpoints.size();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+        	View v;
+            if (convertView == null) {
+            	//on recupere le layout d'un album
+                LayoutInflater li = LayoutInflater.from(mContext);
+                v = li.inflate(R.layout.gallery_album_content, null);
+                
+    		    ArrayList<Point> photos = Menu.pointDAO.getAllPhotosOfTravel(mtripId);
+    		    ImageView photo = (ImageView)v.findViewById(R.id.GalleryPhoto);
+    		    photo.setImageURI(Uri.parse(photos.get(position).getUri()));
+    		}
             else
             {
                 v = convertView;
@@ -570,7 +625,6 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 		}
 		
     }
-
     
     public static class OptionsSectionFragment extends Fragment {
 

@@ -164,7 +164,10 @@ public class PointDAO extends DAO {
 		} else {
 			ArrayList<Point> list = new ArrayList<Point>();
 			while (c.moveToNext()) {
-				list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
+				// on prend que les points de type photo
+				if(c.getInt(2) == 1) {
+					list.add(new Point(c.getInt(0), c.getInt(1), c.getInt(2), c.getLong(3), c.getFloat(4), c.getFloat(5), c.getString(6), c.getString(7), c.getInt(8)));
+				}
 			}
 			c.close();
 			return list;

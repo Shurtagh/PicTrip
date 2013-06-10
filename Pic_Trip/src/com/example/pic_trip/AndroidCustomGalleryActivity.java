@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
  
 public class AndroidCustomGalleryActivity extends Activity {
     private int count;
@@ -32,6 +33,7 @@ public class AndroidCustomGalleryActivity extends Activity {
     MultipleImages list = new MultipleImages();
     ArrayList<ObjetImage> imagesToSend = list.getImages();
     ArrayList<ObjetImage> imagesReceive;
+    private ViewHolder holder;
  
     /** Called when the activity is first created. */
     @Override
@@ -173,7 +175,6 @@ public class AndroidCustomGalleryActivity extends Activity {
         }
  
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(
@@ -214,11 +215,29 @@ public class AndroidCustomGalleryActivity extends Activity {
  
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
+                	ImageView img = (ImageView) v;
+                	RelativeLayout rl =  (RelativeLayout)img.getParent();
+                	CheckBox cb = (CheckBox)rl.getChildAt(1);
                     int id = v.getId();
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse("file://" + arrPath[id]), "image/*");
-                    startActivity(intent);
+                    if (thumbnailsselection[id]){
+                        cb.setChecked(false);
+                        thumbnailsselection[id] = false;
+                        for(int i=0;i<imagesReceive.size();i++) {
+                        	if(imagesReceive.get(i).getImagePath() != null) {
+                        		if(imagesReceive.get(i).getImagePath().equals(arrPath[id])) {
+                    				imagesReceive.remove(i);
+                    			}
+                        	}
+                        }
+                    } else {
+                    	cb.setChecked(true);
+                        thumbnailsselection[id] = true;
+                    }
+                    //Intent intent = new Intent();
+                    //intent.setAction(Intent.ACTION_VIEW);
+                    //intent.setDataAndType(Uri.parse("file://" + arrPath[id]), "image/*");
+                    //startActivity(intent);
+                    
                 }
             });
             holder.imageview.setImageBitmap(thumbnails[position]);

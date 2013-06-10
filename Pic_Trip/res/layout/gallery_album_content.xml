@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+	
+	    <ImageView
+	        android:id="@+id/GalleryPhoto"
+	        android:layout_width="120pt"
+	        android:layout_height="120pt"
+	        android:background="@color/White"
+	        android:padding="1dp"
+	        android:src="@drawable/common_signin_btn_icon_disabled_dark" />
+</LinearLayout>
