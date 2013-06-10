@@ -1,6 +1,12 @@
 package com.example.pic_trip;
 
+import java.util.ArrayList;
+
+import DAO.PointDAO;
+import ElementObject.Point;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +17,8 @@ import android.widget.Button;
 public class GridMenuActivity extends Activity {
 	
 	private int tripId;
+	private PointDAO pointDAO;
+	private Builder adb;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +26,14 @@ public class GridMenuActivity extends Activity {
 		setContentView(R.layout.grid_menu);
 		
 		tripId = getIntent().getIntExtra("id", -1);
+		
+		pointDAO = new PointDAO(getApplicationContext());
+		
+		adb =  new AlertDialog.Builder(this)
+		.setTitle("Information")
+		.setMessage("Aucune photo pour ce voyage.")
+		.setPositiveButton("Ok", null);
+		
 		
 		//récupération des boutons
 		Button btnEditer = (Button)findViewById(R.id.btnEditer);
@@ -43,9 +59,15 @@ public class GridMenuActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				//lancement de l'activité
-				Intent intent = new Intent(GridMenuActivity.this, JournalActivity.class);
-				intent.putExtra("id", tripId);
-            	startActivity(intent);
+				
+				ArrayList<Point> points = pointDAO.getAllPhotosOfTravel(tripId);
+				if(points != null) {
+					Intent intent = new Intent(GridMenuActivity.this, JournalActivity.class);
+					intent.putExtra("id", tripId);
+					startActivity(intent);
+				} else {
+					adb.show();
+				}
 			}
 		});
 		
