@@ -9,7 +9,7 @@
     android:id="@+id/TextView1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Souhaitez-vous vraiment supprimer ce voyage ?"
+    android:text="Que souhaitez-vous faire concernant ce voyage ?"
     android:paddingBottom="10dip" />
  
 

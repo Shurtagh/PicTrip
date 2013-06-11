@@ -46,6 +46,8 @@
         
         <activity android:name="JournalActivity" />
         
+        <activity android:name="ModifyTripActivity" />
+        
         <activity android:name="Gps" android:theme="@android:style/Theme.NoDisplay" />
         
         <activity android:name=".SwipeActivity" android:label="@string/app_name" />

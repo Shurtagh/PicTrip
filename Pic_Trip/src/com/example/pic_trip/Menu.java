@@ -50,6 +50,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     ViewPager mViewPager;
     static Intent intent;
     
+    static Intent intentToModifyTrip;
+    
     static Intent toReload;
     
     static Context context = null;
@@ -71,6 +73,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         super.onCreate(savedInstanceState);
         
         intent = new Intent(Menu.this, GridMenuActivity.class);
+        
+        intentToModifyTrip = new Intent(Menu.this, ModifyTripActivity.class);
         
         toReload = getIntent();
         
@@ -391,13 +395,9 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
             
             tripList.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                        final int arg2, long arg3) {
-                	
+                public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
                 	IDGlobal = arg2;
-                	
                 	createDialogForSupprTrip().show();
-                	
                 	return true;
 		        }
 		    });
@@ -436,7 +436,7 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     	        adb.setIcon(android.R.drawable.ic_dialog_alert);
 
     	        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
-    	        adb.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+    	        adb.setPositiveButton("Le supprimer", new DialogInterface.OnClickListener() {
     	            public void onClick(DialogInterface dialog, int which) {
                     	ArrayList<Travel> list =  travelDAO.getAll();
                     	int id = list.get(IDGlobal).getId();
@@ -444,6 +444,12 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
                     	
                         getActivity().finish();
                         startActivity(toReload);
+    	          } });
+    	        
+    	        adb.setNegativeButton("Le modifier", new DialogInterface.OnClickListener() {
+    	            public void onClick(DialogInterface dialog, int which) {
+                    	intentToModifyTrip.putExtra("id", IDGlobal);
+    	            	startActivity(intentToModifyTrip);
     	          } });
     	        return adb;
     	    }
@@ -492,7 +498,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return triplist.size();
+        	if(triplist != null) {
+        		return triplist.size();
+        	}
+        	return 0;
         }
 
         @Override
