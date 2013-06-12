@@ -49,6 +49,8 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
     ViewPager mViewPager;
     static Intent intent;
+
+    static Intent intent2;
     
     static Intent intentToModifyTrip;
     
@@ -71,8 +73,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         intent = new Intent(Menu.this, GridMenuActivity.class);
+        
+        intent2 = new Intent(Menu.this, GaleryActivity.class);
         
         intentToModifyTrip = new Intent(Menu.this, ModifyTripActivity.class);
         
@@ -472,12 +476,10 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-					// TODO Auto-generated method stub
-					/*ArrayList<Travel> list =  travelDAO.getAll();
-					int id = list.get(arg2).getId();
+					// TODO Auto-generated method stubArrayList<Travel> list =  travelDAO.getAll();
+					int id = arg1.getId();
 					intent.putExtra("id", id);
-	            	startActivity(intent);*/
-		            gallery.setAdapter(new AlbumAdapter(Menu.getContext(), arg1.getId()));					
+	            	startActivity(intent2);				
 				}
 			});
             
@@ -565,59 +567,6 @@ public class Menu extends FragmentActivity implements ActionBar.TabListener {
                 v = convertView;
             }
             v.setId(tr.getId());
-            return v;
-        }
-
-		@Override
-		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-		
-    }
-
-    public static class AlbumAdapter extends BaseAdapter {    
-    	
-        private Context mContext;
-        private int mtripId;
-        private ArrayList<Point> triplistpoints =  new ArrayList<Point>();
-        
-        public AlbumAdapter(Context c, int tripId) {
-            mContext = c;
-            mtripId = tripId;
-            System.out.println("id travel :" + tripId);
-            triplistpoints =  pointDAO.getAllPhotosOfTravel(mtripId);
-        }
-
-        @Override
-        public int getCount() {
-            // TODO Auto-generated method stub
-            return triplistpoints.size();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // TODO Auto-generated method stub
-        	View v;
-            if (convertView == null) {
-            	//on recupere le layout d'un album
-                LayoutInflater li = LayoutInflater.from(mContext);
-                v = li.inflate(R.layout.gallery_album_content, null);
-                
-    		    ArrayList<Point> photos = Menu.pointDAO.getAllPhotosOfTravel(mtripId);
-    		    ImageView photo = (ImageView)v.findViewById(R.id.GalleryPhoto);
-    		    photo.setImageURI(Uri.parse(photos.get(position).getUri()));
-    		}
-            else
-            {
-                v = convertView;
-            }
             return v;
         }
 
